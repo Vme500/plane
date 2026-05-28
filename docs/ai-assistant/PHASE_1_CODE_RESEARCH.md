@@ -4,6 +4,25 @@
 > 分支：feat/ai-phase-1-research
 > 目标：了解 Plane 前后端架构，识别 AI 功能集成点，不修改功能代码。
 
+---
+
+## ⚠️ Errata / Correction（2026-05-28，Phase 1.5 纠正）
+
+**本报告中关于"后端 AI endpoint 似乎已移除"的判断是错误的。**
+
+第 1 阶段仅检查了 `apps/api/plane/app/urls/workspace.py`，未检查 `apps/api/plane/app/urls/external.py`。
+第 1.5 阶段专项核验确认：
+
+- `/api/workspaces/{slug}/ai-assistant/` **实际存在**，定义在 `apps/api/plane/app/urls/external.py`
+- `/api/workspaces/{slug}/projects/{project_id}/ai-assistant/` **实际存在**
+- 对应的 view 类 `WorkspaceGPTIntegrationEndpoint` 和 `GPTIntegrationEndpoint` 在 `apps/api/plane/app/views/external/base.py` 中实现
+- 使用 OpenAI SDK，支持 OpenAI / Anthropic / Gemini 三个 provider
+- 唯一确实缺失的 endpoint 是 `/api/workspaces/{slug}/rephrase-grammar/`（页面编辑器 AI 功能，非本项目重点）
+
+详见：[`PHASE_1_5_EXISTING_AI_INFRA_RESEARCH.md`](./PHASE_1_5_EXISTING_AI_INFRA_RESEARCH.md)
+
+---
+
 ## 0. 关键发现：Plane 已有 AI 基础设施
 
 **这是本次调研最重要的发现。** Plane 已经有部分 AI 相关代码：
@@ -18,7 +37,7 @@
 | LLM 配置检查 | `packages/types/src/instance/base.ts` | 存在，`has_llm_configured: boolean` |
 | 废弃的 OpenAI 环境变量 | `.env.example` | 存在，`OPENAI_API_BASE`、`OPENAI_API_KEY`、`GPT_ENGINE` |
 
-**但后端 AI 端点似乎已移除**：前端调用的 `/api/workspaces/{slug}/ai-assistant/` 和 `/api/workspaces/{slug}/rephrase-grammar/` 在当前 `apps/api/plane/app/urls/workspace.py` 中不存在。
+**~~但后端 AI 端点似乎已移除~~**（❌ **已纠正**，见文件顶部 Errata）：前端调用的 `/api/workspaces/{slug}/ai-assistant/` 和 `/api/workspaces/{slug}/rephrase-grammar/` 在当前 `apps/api/plane/app/urls/workspace.py` 中不存在。**但实际上它们定义在 `apps/api/plane/app/urls/external.py`，详见 Phase 1.5 报告。**
 
 **影响**：我们的 AI Assistant 集成可以复用或扩展现有的 `AIService` 和 `pi-chat` 入口，而不是从零开始。
 
