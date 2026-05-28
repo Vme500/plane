@@ -18,11 +18,14 @@ import { AIService } from "@/services/ai.service";
 
 const aiService = new AIService();
 
+type ChatMode = "standard" | "mcp";
+
 type ChatMessage = {
   id: string;
   role: "user" | "assistant";
   content: string;
   createdAt: string;
+  mode?: ChatMode;
 };
 
 let messageIdCounter = 0;
@@ -43,41 +46,86 @@ function extractAIResponse(res: unknown): string {
   return "No response content returned.";
 }
 
+function extractMCPToolSummary(res: unknown): string {
+  if (!res || typeof res !== "object") return "";
+  const obj = res as Record<string, unknown>;
+  const mcpResult = obj.mcp_result as Record<string, unknown> | undefined;
+  if (!mcpResult) return "";
+
+  const tool = mcpResult.tool as string | undefined;
+  const success = mcpResult.success as boolean;
+  const error = mcpResult.error as string | undefined;
+
+  if (!success && error) {
+    return `[MCP] ${tool || "Unknown tool"}: ${error}`;
+  }
+
+  if (success) {
+    const result = mcpResult.result as Record<string, unknown> | undefined;
+    if (result) {
+      const count = result.count as number | undefined;
+      if (count !== undefined) {
+        return `[MCP] ${tool}: Found ${count} item(s)`;
+      }
+    }
+    return `[MCP] ${tool}: Success`;
+  }
+
+  return "";
+}
+
 function PiChatPage() {
   const { workspaceSlug } = useParams();
   const { config } = useInstance();
   const [messages, setMessages] = useState<ChatMessage[]>([]);
   const [input, setInput] = useState("");
   const [isLoading, setIsLoading] = useState(false);
+  const [chatMode, setChatMode] = useState<ChatMode>("standard");
 
   const enableAiAssistant = config?.enable_ai_assistant ?? false;
   const hasLlmConfigured = config?.has_llm_configured ?? false;
+  const enableAiMcpRuntime = config?.enable_ai_mcp_runtime ?? false;
 
   const handleSend = useCallback(async () => {
     const prompt = input.trim();
     if (!prompt || !workspaceSlug) return;
 
+    const currentMode = chatMode;
     const userMessage: ChatMessage = {
       id: generateId(),
       role: "user",
       content: prompt,
       createdAt: new Date().toISOString(),
+      mode: currentMode,
     };
     setMessages((prev) => [...prev, userMessage]);
     setInput("");
     setIsLoading(true);
 
     try {
-      const res = await aiService.createGptTask(workspaceSlug.toString(), {
+      const payload: { prompt: string; task: string; mode?: string } = {
         prompt,
         task: "chat",
-      });
+      };
+
+      // Add mode for MCP requests
+      if (currentMode === "mcp") {
+        payload.mode = "mcp";
+      }
+
+      const res = await aiService.createGptTask(workspaceSlug.toString(), payload);
+
+      // Extract response - MCP responses may have additional tool summary
+      const responseContent = extractAIResponse(res);
+      const mcpSummary = currentMode === "mcp" ? extractMCPToolSummary(res) : "";
+      const fullContent = mcpSummary ? `${mcpSummary}\n\n${responseContent}` : responseContent;
 
       const assistantMessage: ChatMessage = {
         id: generateId(),
         role: "assistant",
-        content: extractAIResponse(res),
+        content: fullContent,
         createdAt: new Date().toISOString(),
+        mode: currentMode,
       };
       setMessages((prev) => [...prev, assistantMessage]);
     } catch (err: unknown) {
@@ -96,12 +144,13 @@ function PiChatPage() {
         role: "assistant",
         content: `Error: ${errorMessage}`,
         createdAt: new Date().toISOString(),
+        mode: currentMode,
       };
       setMessages((prev) => [...prev, errorAssistantMessage]);
     } finally {
       setIsLoading(false);
     }
-  }, [input, workspaceSlug]);
+  }, [input, workspaceSlug, chatMode]);
 
   // Feature flag: AI Assistant disabled
   if (!enableAiAssistant) {
@@ -172,6 +221,34 @@ function PiChatPage() {
 
           {/* Input area */}
           <div className="border-custom-border-200 border-t p-4">
+            {/* MCP Mode Toggle */}
+            {enableAiMcpRuntime && (
+              <div className="mb-3 flex items-center gap-2">
+                <span className="text-xs text-custom-text-300">Mode:</span>
+                <button
+                  onClick={() => setChatMode("standard")}
+                  className={`text-xs rounded-md px-2 py-1 ${
+                    chatMode === "standard"
+                      ? "bg-custom-primary text-white"
+                      : "bg-custom-background-80 text-custom-text-200 hover:bg-custom-background-100"
+                  }`}
+                >
+                  Standard Chat
+                </button>
+                <button
+                  onClick={() => setChatMode("mcp")}
+                  className={`text-xs rounded-md px-2 py-1 ${
+                    chatMode === "mcp"
+                      ? "bg-custom-primary text-white"
+                      : "bg-custom-background-80 text-custom-text-200 hover:bg-custom-background-100"
+                  }`}
+                >
+                  MCP Read-only
+                </button>
+                {chatMode === "mcp" && <span className="text-xs text-yellow-600">Read-only queries only</span>}
+              </div>
+            )}
+
             <div className="flex gap-2">
               <input
                 type="text"
@@ -183,7 +260,7 @@ function PiChatPage() {
                     handleSend();
                   }
                 }}
-                placeholder="Ask AI anything..."
+                placeholder={chatMode === "mcp" ? "Ask about projects, work items, states..." : "Ask AI anything..."}
                 className="border-custom-border-200 bg-custom-background-100 text-sm focus:border-custom-primary flex-1 rounded-lg border px-4 py-2 outline-none"
                 disabled={isLoading}
               />

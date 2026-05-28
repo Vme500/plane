@@ -305,3 +305,23 @@ ENABLE_AI_MCP_RUNTIME=false        # 是否启用 MCP Runtime
 - ✅ 不修改 Docker
 - ✅ typecheck 通过
 - ✅ lint 通过（0 errors）
+
+---
+
+## 12. 第 6 阶段实施记录（2026-05-28）
+
+第 6 阶段已按本文档决策实施，详见 [`PHASE_6_MCP_READONLY_RUNTIME_REPORT.md`](./PHASE_6_MCP_READONLY_RUNTIME_REPORT.md)。
+
+**实际实施范围**：
+
+- ✅ 新增 MCP runtime 模块（`apps/api/plane/ai/`）
+- ✅ 定义 read-only 工具白名单（10 个工具）
+- ✅ 实现 mock 工具执行（直接数据库查询）
+- ✅ 扩展 `WorkspaceGPTIntegrationEndpoint` 支持 `mode=mcp`
+- ✅ 前端添加 MCP mode 切换按钮
+- ✅ 前端处理 MCP 响应展示
+- ✅ 禁止所有写操作
+- ✅ Python py_compile 通过
+- ✅ typecheck 通过
+- ✅ lint 通过（0 errors）
+- ⏳ 未真实调用 plane-mcp-server（当前环境无 MCP SDK）

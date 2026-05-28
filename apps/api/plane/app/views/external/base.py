@@ -22,6 +22,9 @@ from plane.utils.exception_logger import log_exception
 
 from ..base import BaseAPIView
 
+# MCP runtime imports
+from plane.ai.mcp_runtime import execute_mcp_request, format_mcp_response_text
+
 
 class LLMProvider:
     """Base class for LLM provider configurations"""
@@ -196,6 +199,35 @@ class WorkspaceGPTIntegrationEndpoint(BaseAPIView):
         if not task:
             return Response({"error": "Task is required"}, status=status.HTTP_400_BAD_REQUEST)
 
+        # Check if MCP mode is requested
+        mode = request.data.get("mode", "standard")
+
+        if mode == "mcp":
+            # MCP mode - execute read-only MCP tools
+            prompt = request.data.get("prompt", "")
+            user_id = str(request.user.id) if request.user else "unknown"
+
+            mcp_result = execute_mcp_request(
+                prompt=prompt,
+                workspace_slug=slug,
+                user_id=user_id,
+            )
+
+            # Format response
+            response_text = format_mcp_response_text(mcp_result)
+            response_html = response_text.replace("\n", "<br/>")
+
+            return Response(
+                {
+                    "response": response_text,
+                    "response_html": response_html,
+                    "mode": "mcp",
+                    "mcp_result": mcp_result,
+                },
+                status=status.HTTP_200_OK,
+            )
+
+        # Standard mode - original prompt-response behavior
         text, error = get_llm_response(task, request.data.get("prompt", False), api_key, model, provider)
         if not text and error:
             return Response(
