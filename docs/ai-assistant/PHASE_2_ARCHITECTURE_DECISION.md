@@ -286,3 +286,22 @@ ENABLE_AI_MCP_RUNTIME=false        # 是否启用 MCP Runtime
 - ✅ 内存级 conversation history
 - ✅ 修复 no-array-index-key lint warning
 - ⏳ sidebar 入口 gating 跳过（当前 sidebar 中 pi-chat 是死代码）
+
+---
+
+## 11. 第 5 阶段实施记录（2026-05-28）
+
+第 5 阶段已按本文档决策实施，详见 [`PHASE_5_AI_SETTINGS_PAGE_REPORT.md`](./PHASE_5_AI_SETTINGS_PAGE_REPORT.md)。
+
+**实际实施范围**：
+
+- ✅ 新增 "AI Assistant" 到 Workspace Settings sidebar（FEATURES 分类）
+- ✅ 新增只读设置页面，展示 AI Assistant 状态
+- ✅ 展示 enable_ai_assistant、enable_ai_mcp_runtime、has_llm_configured 三个状态
+- ✅ 不展示 API key，不展示完整环境变量值
+- ✅ 无表单、无保存按钮
+- ✅ 不新增后端 API
+- ✅ 不新增 migration
+- ✅ 不修改 Docker
+- ✅ typecheck 通过
+- ✅ lint 通过（0 errors）

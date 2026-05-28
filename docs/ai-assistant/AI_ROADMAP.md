@@ -165,27 +165,31 @@
 
 ---
 
-## Phase 5: AI Settings Page (Current)
+## Phase 5: AI Settings Page ✅
 
-**Goal**: Implement workspace AI settings.
+**Goal**: Implement workspace AI settings (read-only).
 
 **Changes**:
 
-- Add "AI Assistant" to Workspace Settings
-- Settings page for enable/disable, provider selection
-- Feature flag: `enable_ai_assistant`
-- Secure API key display (masked)
+- Add "AI Assistant" to Workspace Settings sidebar (FEATURES category)
+- Read-only settings page showing AI Assistant status
+- Feature flag: `enable_ai_assistant`, `enable_ai_mcp_runtime`, `has_llm_configured`
+- No API key display, no save capability
 
 **Acceptance Criteria**:
 
-- [ ] AI settings page accessible in Workspace Settings
-- [ ] Admin can enable/disable AI Assistant
-- [ ] Settings persisted in database
-- [ ] API key never exposed to frontend
+- [x] AI settings page accessible in Workspace Settings
+- [x] Page shows AI Assistant, MCP Runtime, LLM Configuration status
+- [x] API key never exposed to frontend
+- [x] Page is read-only (no save button)
+- [x] typecheck passes
+- [x] lint passes (0 errors)
 
-**Risks**: Medium (security-sensitive)
+**Risks**: Low (read-only page, no backend changes)
 
-**Future PR**: Yes (settings infrastructure)
+**Future PR**: Yes (settings page)
+
+**Report**: See [PHASE_5_AI_SETTINGS_PAGE_REPORT.md](./PHASE_5_AI_SETTINGS_PAGE_REPORT.md)
 
 ---
 
