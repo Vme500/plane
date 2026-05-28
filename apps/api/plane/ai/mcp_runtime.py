@@ -85,7 +85,7 @@ def parse_mcp_intent(prompt: str) -> Dict[str, Any]:
 def execute_mcp_request(
     prompt: str,
     workspace_slug: str,
-    user_id: str,
+    user,
 ) -> Dict[str, Any]:
     """
     Execute an MCP request.
@@ -94,13 +94,13 @@ def execute_mcp_request(
     1. Checks if MCP runtime is enabled
     2. Parses the user prompt to determine tool intent
     3. Validates the tool is read-only
-    4. Executes the tool (mock in Phase 6)
+    4. Executes the tool with permission checks
     5. Returns structured response
 
     Args:
         prompt: User's natural language prompt
         workspace_slug: Current workspace slug
-        user_id: Current user ID
+        user: Django User object (request.user)
 
     Returns:
         Dict with response data
@@ -138,7 +138,7 @@ def execute_mcp_request(
         result = execute_tool_mock(
             tool_name=tool_name,
             workspace_slug=workspace_slug,
-            user_id=user_id,
+            user=user,
             params=intent.get("params"),
         )
 

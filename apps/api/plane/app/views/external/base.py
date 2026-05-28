@@ -205,12 +205,11 @@ class WorkspaceGPTIntegrationEndpoint(BaseAPIView):
         if mode == "mcp":
             # MCP mode - execute read-only MCP tools
             prompt = request.data.get("prompt", "")
-            user_id = str(request.user.id) if request.user else "unknown"
 
             mcp_result = execute_mcp_request(
                 prompt=prompt,
                 workspace_slug=slug,
-                user_id=user_id,
+                user=request.user,
             )
 
             # Format response

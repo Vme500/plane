@@ -284,3 +284,19 @@
 | 安全字段         | ✅ 安全      | 使用 .values() 指定字段          |
 | endpoint 安全    | ✅ 安全      | 权限装饰器正确                   |
 | 前端安全         | ✅ 安全      | 不展示敏感信息                   |
+
+---
+
+## 23. Phase 6.6 修复记录（2026-05-28）
+
+以上安全问题已在 Phase 6.6 中全部修复，详见 [`PHASE_6_6_MCP_PERMISSION_HARDENING_REPORT.md`](./PHASE_6_6_MCP_PERMISSION_HARDENING_REPORT.md)。
+
+**修复状态**：
+
+| 类别             | 修复前    | 修复后                           |
+| ---------------- | --------- | -------------------------------- |
+| workspace 隔离   | ❌ 有风险 | ✅ 已修复                        |
+| project 权限     | ❌ 有风险 | ✅ 已修复                        |
+| soft-delete 过滤 | ❌ 有风险 | ✅ 已修复（SoftDeletionManager） |
+| archived 过滤    | ❌ 有风险 | ✅ 已修复（按 Plane API 模式）   |
+| 返回数量限制     | ⚠️ 部分   | ✅ 已修复（全部有限制）          |

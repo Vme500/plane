@@ -225,6 +225,38 @@
 
 ---
 
+## Phase 6.6: Permission Hardening ✅
+
+**Goal**: Fix security issues found in Phase 6.5 review.
+
+**Changes**:
+
+- Add workspace membership verification (defense-in-depth)
+- Add project membership check for all entity-level tools
+- Use `Issue.issue_objects` for automatic archived/draft/triage filtering
+- Add return quantity limits on all list/search tools
+- Add query length limit on search
+- Sanitize error messages (fail-closed, no internals leaked)
+- Pass `request.user` object instead of user_id string
+
+**Acceptance Criteria**:
+
+- [x] Cross-workspace data access prevented
+- [x] Project membership enforced on all entity tools
+- [x] Soft-deleted data filtered (via SoftDeletionManager)
+- [x] Archived data filtered per Plane API patterns
+- [x] Return quantity limits on all tools
+- [x] Safe error messages only
+- [x] py_compile passes
+- [x] typecheck passes
+- [x] lint passes (0 errors)
+
+**Risks**: Low (defense-in-depth, follows existing Plane patterns)
+
+**Report**: See [PHASE_6_6_MCP_PERMISSION_HARDENING_REPORT.md](./PHASE_6_6_MCP_PERMISSION_HARDENING_REPORT.md)
+
+---
+
 ## Phase 7: Write Operation Confirmation
 
 **Goal**: Implement confirmation flow for write operations.

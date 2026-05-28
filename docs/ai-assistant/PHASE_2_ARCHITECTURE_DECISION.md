@@ -325,3 +325,23 @@ ENABLE_AI_MCP_RUNTIME=false        # 是否启用 MCP Runtime
 - ✅ typecheck 通过
 - ✅ lint 通过（0 errors）
 - ⏳ 未真实调用 plane-mcp-server（当前环境无 MCP SDK）
+
+---
+
+## 13. 第 6.6 阶段实施记录（2026-05-28）
+
+第 6.6 阶段修复了 Phase 6.5 安全审查发现的权限问题，详见 [`PHASE_6_6_MCP_PERMISSION_HARDENING_REPORT.md`](./PHASE_6_6_MCP_PERMISSION_HARDENING_REPORT.md)。
+
+**实际实施范围**：
+
+- ✅ 修复跨 workspace 数据访问风险
+- ✅ 修复 project 权限绕过风险
+- ✅ 添加 soft-deleted 过滤（via SoftDeletionManager）
+- ✅ 添加 archived 过滤（按 Plane 现有 API 模式）
+- ✅ 添加返回数量限制
+- ✅ 使用 `Issue.issue_objects` 替代 `Issue.objects`
+- ✅ 错误消息脱敏（fail-closed）
+- ✅ 传递 `request.user` 对象替代 user_id 字符串
+- ✅ Python py_compile 通过
+- ✅ typecheck 通过
+- ✅ lint 通过（0 errors）

@@ -230,3 +230,17 @@
 - 使用 LLM function calling 替代关键词匹配
 - 支持更复杂的自然语言查询
 - 添加上下文感知（当前项目、当前工作项等）
+
+---
+
+## 17. Phase 6.6 修复记录（2026-05-28）
+
+Phase 6.5 安全审查发现的权限问题已在 Phase 6.6 中修复，详见 [`PHASE_6_6_MCP_PERMISSION_HARDENING_REPORT.md`](./PHASE_6_6_MCP_PERMISSION_HARDENING_REPORT.md)。
+
+**主要变更**：
+
+- `execute_tool_mock()` 签名变更：`user_id: str` → `user`（Django User 对象）
+- `execute_mcp_request()` 签名变更：`user_id: str` → `user`
+- 所有工具添加 workspace / project membership 校验
+- Issue 工具改用 `Issue.issue_objects`
+- 所有 list 工具添加返回数量限制
