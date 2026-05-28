@@ -151,6 +151,8 @@ class InstanceEndpoint(BaseAPIView):
 
         # Open AI settings
         data["has_llm_configured"] = bool(LLM_API_KEY)
+        data["enable_ai_assistant"] = os.environ.get("ENABLE_AI_ASSISTANT", "0").lower() in ("1", "true")
+        data["enable_ai_mcp_runtime"] = os.environ.get("ENABLE_AI_MCP_RUNTIME", "0").lower() in ("1", "true")
 
         # File size settings
         data["file_size_limit"] = float(os.environ.get("FILE_SIZE_LIMIT", 5242880))

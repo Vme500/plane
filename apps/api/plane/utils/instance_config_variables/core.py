@@ -221,6 +221,18 @@ llm_config_variables = [
         "category": "AI",
         "is_encrypted": False,
     },
+    {
+        "key": "ENABLE_AI_ASSISTANT",
+        "value": os.environ.get("ENABLE_AI_ASSISTANT", "0"),
+        "category": "AI",
+        "is_encrypted": False,
+    },
+    {
+        "key": "ENABLE_AI_MCP_RUNTIME",
+        "value": os.environ.get("ENABLE_AI_MCP_RUNTIME", "0"),
+        "category": "AI",
+        "is_encrypted": False,
+    },
 ]
 
 unsplash_config_variables = [

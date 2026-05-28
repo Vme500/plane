@@ -4,4 +4,8 @@
  * See the LICENSE file for details.
  */
 
-export type TInstanceAIConfigurationKeys = "LLM_API_KEY" | "LLM_MODEL";
+export type TInstanceAIConfigurationKeys =
+  | "LLM_API_KEY"
+  | "LLM_MODEL"
+  | "ENABLE_AI_ASSISTANT"
+  | "ENABLE_AI_MCP_RUNTIME";
