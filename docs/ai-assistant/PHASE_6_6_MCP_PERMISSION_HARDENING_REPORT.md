@@ -263,3 +263,17 @@ Project.objects.filter(
 | `apps/api/plane/ai/mcp_tools.py`            | 重写：添加安全 helper、workspace 校验、project membership 校验、archived 过滤、数量限制 |
 | `apps/api/plane/ai/mcp_runtime.py`          | 修改：`user_id` 参数改为 `user` 对象                                                    |
 | `apps/api/plane/app/views/external/base.py` | 修改：传递 `request.user` 而非 `user_id` 字符串                                         |
+
+---
+
+## 21. Phase 6.7 调研记录（2026-05-28）
+
+Phase 6.7 完成了真实 plane-mcp-server 集成调研，详见 [`PHASE_6_7_REAL_MCP_INTEGRATION_RESEARCH.md`](./PHASE_6_7_REAL_MCP_INTEGRATION_RESEARCH.md)。
+
+**调研结论**：
+
+- ✅ `plane-mcp-server` 可通过 `uvx plane-mcp-server stdio` 运行
+- ✅ 所有 10 个 read-only 工具在 plane-mcp-server 中有对应工具
+- ✅ 推荐 subprocess + stdio transport（不修改 Docker）
+- ⚠️ 认证使用 workspace API key，不能代表当前用户
+- ⚠️ 需要在 client 层做写操作二次过滤

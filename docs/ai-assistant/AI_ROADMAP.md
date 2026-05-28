@@ -257,6 +257,43 @@
 
 ---
 
+## Phase 6.7: Real MCP Server Integration Research ✅
+
+**Goal**: Research and design real plane-mcp-server integration.
+
+**Findings**:
+
+- `plane-mcp-server` available via `uvx plane-mcp-server stdio`
+- Requires `PLANE_API_KEY` + `PLANE_WORKSPACE_SLUG` env vars
+- stdio transport recommended for Phase 6.8 (subprocess, no Docker changes)
+- Auth: workspace-level API key (`X-Api-Key` header), not per-user
+- Permission risk: MCP server can access all workspace projects (wider than current user)
+- Mitigation: tool allowlist + write operation rejection at client layer
+- All 10 read-only tools have matching names in plane-mcp-server
+
+**Risks**: Medium (API key auth bypasses user permissions)
+
+**Report**: See [PHASE_6_7_REAL_MCP_INTEGRATION_RESEARCH.md](./PHASE_6_7_REAL_MCP_INTEGRATION_RESEARCH.md)
+
+---
+
+## Phase 6.8: Real MCP Server stdio Integration (Planned)
+
+**Goal**: Implement stdio adapter to call real plane-mcp-server.
+
+**Planned Changes**:
+
+- Add `AI_MCP_ADAPTER` config (mock|stdio)
+- Add `AI_MCP_SERVER_COMMAND` config
+- Add `AI_MCP_SERVER_TIMEOUT` config
+- Implement stdio MCP client adapter
+- Keep mock adapter as fallback
+- Tool allowlist secondary filter
+
+**Risks**: Medium (API key auth, subprocess management)
+
+---
+
 ## Phase 7: Write Operation Confirmation
 
 **Goal**: Implement confirmation flow for write operations.

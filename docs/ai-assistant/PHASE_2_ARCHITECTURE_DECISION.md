@@ -345,3 +345,18 @@ ENABLE_AI_MCP_RUNTIME=false        # 是否启用 MCP Runtime
 - ✅ Python py_compile 通过
 - ✅ typecheck 通过
 - ✅ lint 通过（0 errors）
+
+---
+
+## 14. 第 6.7 阶段调研记录（2026-05-28）
+
+第 6.7 阶段完成了真实 plane-mcp-server 集成调研，详见 [`PHASE_6_7_REAL_MCP_INTEGRATION_RESEARCH.md`](./PHASE_6_7_REAL_MCP_INTEGRATION_RESEARCH.md)。
+
+**调研结论**：
+
+- ✅ `plane-mcp-server` 可通过 `uvx plane-mcp-server stdio` 运行
+- ✅ 所有 10 个 read-only 工具在 plane-mcp-server 中有对应工具
+- ✅ 推荐方案 A：subprocess + stdio transport（不修改 Docker）
+- ⚠️ 认证使用 workspace API key（`PLANE_API_KEY`），不能代表当前用户
+- ⚠️ 需要在 client 层做写操作二次过滤
+- ⏳ Phase 6.8 计划实现 stdio adapter

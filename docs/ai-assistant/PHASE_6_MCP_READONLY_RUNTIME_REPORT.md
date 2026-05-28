@@ -244,3 +244,16 @@ Phase 6.5 安全审查发现的权限问题已在 Phase 6.6 中修复，详见 [
 - 所有工具添加 workspace / project membership 校验
 - Issue 工具改用 `Issue.issue_objects`
 - 所有 list 工具添加返回数量限制
+
+---
+
+## 18. Phase 6.7 调研记录（2026-05-28）
+
+Phase 6.7 完成了真实 plane-mcp-server 集成调研，详见 [`PHASE_6_7_REAL_MCP_INTEGRATION_RESEARCH.md`](./PHASE_6_7_REAL_MCP_INTEGRATION_RESEARCH.md)。
+
+**关键发现**：
+
+- `plane-mcp-server` 可通过 `uvx plane-mcp-server stdio` 运行
+- 所有 10 个 read-only 工具在 plane-mcp-server 中有对应工具名
+- 认证使用 `PLANE_API_KEY`（workspace 级 API key），不能代表当前用户
+- 推荐 subprocess + stdio transport 方案（不修改 Docker）
