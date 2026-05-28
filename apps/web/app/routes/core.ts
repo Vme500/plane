@@ -105,6 +105,12 @@ export const coreRoutes: RouteConfigEntry[] = [
           route(":workspaceSlug/stickies", "./(all)/[workspaceSlug]/(projects)/stickies/page.tsx"),
         ]),
 
+        // Pi Chat (AI Assistant)
+        // TODO: gate this page with enable_ai_assistant once the flag is added in Phase 4
+        layout("./(all)/[workspaceSlug]/(projects)/pi-chat/layout.tsx", [
+          route(":workspaceSlug/pi-chat", "./(all)/[workspaceSlug]/(projects)/pi-chat/page.tsx"),
+        ]),
+
         // Workspace Views
         layout("./(all)/[workspaceSlug]/(projects)/workspace-views/layout.tsx", [
           route(":workspaceSlug/workspace-views", "./(all)/[workspaceSlug]/(projects)/workspace-views/page.tsx"),

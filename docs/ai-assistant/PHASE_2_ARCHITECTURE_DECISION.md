@@ -254,3 +254,17 @@ ENABLE_AI_MCP_RUNTIME=false        # 是否启用 MCP Runtime
 | 现有 LLMProvider 只做 prompt completion，不支持 tool use | 高 | 第一版不接 MCP，后续需要扩展 |
 | MCP runtime 需要额外安全边界 | 高 | 后续阶段单独处理 |
 | 上游更新可能覆盖我们的修改 | 中 | 保持 fork 同步，改动模块化 |
+
+---
+
+## 9. 第 3 阶段实施记录（2026-05-28）
+
+第 3 阶段已按本文档决策实施，详见 [`PHASE_3_PI_CHAT_PAGE_REPORT.md`](./PHASE_3_PI_CHAT_PAGE_REPORT.md)。
+
+**实际实施范围**：
+- ✅ 复用 pi-chat 侧边栏入口（未修改）
+- ✅ 新增 `/:workspaceSlug/pi-chat` 路由
+- ✅ 新增页面组件（page.tsx + layout.tsx + header.tsx）
+- ✅ 使用 `has_llm_configured` 检查 LLM 配置状态
+- ✅ 调用现有 `AIService.createGptTask()` 做 prompt-response
+- ⏳ `enable_ai_assistant` flag 控制推迟到 Phase 4

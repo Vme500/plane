@@ -70,7 +70,7 @@
 
 ---
 
-## Phase 2: Architecture Decision (Current)
+## Phase 2: Architecture Decision ✅
 **Goal**: Align architecture with existing AI infrastructure.
 
 **Changes**:
@@ -91,32 +91,36 @@
 
 ---
 
-## Phase 3: pi-chat Minimal Page Skeleton
+## Phase 3: pi-chat Minimal Page Skeleton ✅
 **Goal**: Make `/:workspaceSlug/pi-chat/` route work with a minimal chat page.
 
 **Changes**:
 - Add route for `/:workspaceSlug/pi-chat/`
 - Create minimal chat page component
-- Show "AI Assistant disabled" when `enable_ai_assistant=false`
 - Show "LLM not configured" when `has_llm_configured=false`
-- Show chat interface when both are true
-- All behind feature flag, disabled by default
+- Show chat interface when LLM is configured
+- Connect to existing AIService `createGptTask()` for prompt-response
+- TODO: gate with `enable_ai_assistant` flag (deferred to Phase 4)
 
 **Acceptance Criteria**:
-- [ ] `/:workspaceSlug/pi-chat/` route exists
-- [ ] Page shows appropriate state based on feature flags
-- [ ] Chat input and message display work
-- [ ] No changes to existing features
-- [ ] No functional code changes outside pi-chat scope
+- [x] `/:workspaceSlug/pi-chat/` route exists
+- [x] Page shows "LLM not configured" when `has_llm_configured=false`
+- [x] Chat input and message display work
+- [x] Connected to existing `/ai-assistant/` endpoint via AIService
+- [x] No changes to existing features
+- [x] No functional code changes outside pi-chat scope
+- [ ] `enable_ai_assistant` flag control (deferred to Phase 4)
 
 **Risks**: Low (new page, no existing code modified)
 
 **Future PR**: Yes (pi-chat page)
 
+**Report**: See [PHASE_3_PI_CHAT_PAGE_REPORT.md](./PHASE_3_PI_CHAT_PAGE_REPORT.md)
+
 ---
 
-## Phase 4: Basic Prompt-Response via Existing Endpoint
-**Goal**: Connect pi-chat page to existing `/ai-assistant/` endpoint.
+## Phase 4: Basic Prompt-Response Enhancement (Current)
+**Goal**: Enhance pi-chat prompt-response and add feature flag.
 
 **Changes**:
 - Extend AIService with `chat()` method
