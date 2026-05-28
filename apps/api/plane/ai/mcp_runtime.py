@@ -5,9 +5,14 @@
 """
 MCP Runtime - Read-only MCP runtime for Plane AI Assistant.
 
-This module provides the MCP runtime for executing read-only tools.
-In Phase 6, it uses mock implementations. In future phases, it will
-call the actual plane-mcp-server via subprocess or MCP SDK.
+Dispatches to one of two adapters based on AI_MCP_ADAPTER:
+  - mock:  Direct DB query (Phase 6, default). Per-user permissions enforced.
+  - stdio: Real plane-mcp-server via subprocess (Phase 6.8).
+           Uses workspace API key — NOT per-user. See security notes in
+           mcp_stdio_adapter.py.
+
+No automatic fallback: if stdio fails, returns an error (avoids misleading
+the user into thinking data came from the MCP server when it came from mock).
 """
 
 import json
@@ -82,6 +87,11 @@ def parse_mcp_intent(prompt: str) -> Dict[str, Any]:
     return {"tool_name": None, "params": {}}
 
 
+def _get_adapter_type() -> str:
+    """Read AI_MCP_ADAPTER from env. Default: 'mock'."""
+    return os.environ.get("AI_MCP_ADAPTER", "mock").strip().lower()
+
+
 def execute_mcp_request(
     prompt: str,
     workspace_slug: str,
@@ -90,12 +100,8 @@ def execute_mcp_request(
     """
     Execute an MCP request.
 
-    This function:
-    1. Checks if MCP runtime is enabled
-    2. Parses the user prompt to determine tool intent
-    3. Validates the tool is read-only
-    4. Executes the tool with permission checks
-    5. Returns structured response
+    Dispatches to mock (direct DB) or stdio (real plane-mcp-server) adapter
+    based on AI_MCP_ADAPTER env var.
 
     Args:
         prompt: User's natural language prompt
@@ -133,39 +139,86 @@ def execute_mcp_request(
             "mode": "mcp",
         }
 
-    # Execute tool
-    try:
-        result = execute_tool_mock(
-            tool_name=tool_name,
-            workspace_slug=workspace_slug,
-            user=user,
-            params=intent.get("params"),
-        )
+    adapter = _get_adapter_type()
 
-        # Format response for display
-        if result.get("success"):
-            return {
-                "success": True,
-                "mode": "mcp",
-                "tool": tool_name,
-                "tool_description": get_tool_description(tool_name),
-                "result": result.get("result"),
-            }
-        else:
+    # --- Mock adapter (Phase 6, default) ---
+    if adapter == "mock":
+        try:
+            result = execute_tool_mock(
+                tool_name=tool_name,
+                workspace_slug=workspace_slug,
+                user=user,
+                params=intent.get("params"),
+            )
+            if result.get("success"):
+                return {
+                    "success": True,
+                    "mode": "mcp",
+                    "adapter": "mock",
+                    "tool": tool_name,
+                    "tool_description": get_tool_description(tool_name),
+                    "result": result.get("result"),
+                }
+            else:
+                return {
+                    "success": False,
+                    "mode": "mcp",
+                    "adapter": "mock",
+                    "tool": tool_name,
+                    "error": result.get("error", "Unknown error"),
+                }
+        except Exception as e:
+            log_exception(e)
             return {
                 "success": False,
                 "mode": "mcp",
+                "adapter": "mock",
                 "tool": tool_name,
-                "error": result.get("error", "Unknown error"),
+                "error": "Internal error executing tool.",
             }
 
-    except Exception as e:
-        log_exception(e)
+    # --- Stdio adapter (Phase 6.8, real plane-mcp-server) ---
+    elif adapter == "stdio":
+        try:
+            from .mcp_stdio_adapter import call_tool_stdio
+
+            result = call_tool_stdio(
+                tool_name=tool_name,
+                arguments=intent.get("params"),
+            )
+            if result.get("success"):
+                return {
+                    "success": True,
+                    "mode": "mcp",
+                    "adapter": "stdio",
+                    "tool": tool_name,
+                    "tool_description": get_tool_description(tool_name),
+                    "result": result.get("result"),
+                }
+            else:
+                return {
+                    "success": False,
+                    "mode": "mcp",
+                    "adapter": "stdio",
+                    "tool": tool_name,
+                    "error": result.get("error", "Unknown error"),
+                }
+        except Exception as e:
+            log_exception(e)
+            return {
+                "success": False,
+                "mode": "mcp",
+                "adapter": "stdio",
+                "tool": tool_name,
+                "error": "MCP stdio adapter error.",
+            }
+
+    # --- Unknown adapter ---
+    else:
         return {
             "success": False,
             "mode": "mcp",
-            "tool": tool_name,
-            "error": f"Internal error executing tool: {str(e)}",
+            "error": f"Unsupported AI_MCP_ADAPTER value: '{adapter}'. Use 'mock' or 'stdio'.",
         }
 
 

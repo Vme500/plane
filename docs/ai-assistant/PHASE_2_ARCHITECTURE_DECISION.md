@@ -360,3 +360,22 @@ ENABLE_AI_MCP_RUNTIME=false        # 是否启用 MCP Runtime
 - ⚠️ 认证使用 workspace API key（`PLANE_API_KEY`），不能代表当前用户
 - ⚠️ 需要在 client 层做写操作二次过滤
 - ⏳ Phase 6.8 计划实现 stdio adapter
+
+---
+
+## 15. 第 6.8 阶段实施记录（2026-05-28）
+
+第 6.8 阶段实现了真实 MCP stdio adapter prototype，详见 [`PHASE_6_8_REAL_MCP_STDIO_ADAPTER_REPORT.md`](./PHASE_6_8_REAL_MCP_STDIO_ADAPTER_REPORT.md)。
+
+**实际实施范围**：
+
+- ✅ 新增 `mcp_stdio_adapter.py`（JSON-RPC over subprocess）
+- ✅ `mcp_runtime.py` 添加 adapter dispatch（mock/stdio）
+- ✅ 默认 adapter 为 mock（stdio 需显式启用）
+- ✅ 不自动 fallback
+- ✅ tool allowlist 双重检查
+- ✅ 写操作硬拒绝
+- ✅ subprocess 安全措施（shell=False, timeout, 进程清理）
+- ✅ 错误脱敏
+- ✅ py_compile/typecheck/lint 通过
+- ⚠️ 未实现后置权限过滤（stdio 使用 workspace API key，不能代表用户）

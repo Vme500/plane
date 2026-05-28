@@ -277,3 +277,16 @@ Phase 6.7 完成了真实 plane-mcp-server 集成调研，详见 [`PHASE_6_7_REA
 - ✅ 推荐 subprocess + stdio transport（不修改 Docker）
 - ⚠️ 认证使用 workspace API key，不能代表当前用户
 - ⚠️ 需要在 client 层做写操作二次过滤
+
+---
+
+## 22. Phase 6.8 实施记录（2026-05-28）
+
+Phase 6.8 已实现真实 MCP stdio adapter prototype，详见 [`PHASE_6_8_REAL_MCP_STDIO_ADAPTER_REPORT.md`](./PHASE_6_8_REAL_MCP_STDIO_ADAPTER_REPORT.md)。
+
+**关键变化**：
+
+- 新增 `mcp_stdio_adapter.py`：通过 subprocess 调用 plane-mcp-server
+- `mcp_runtime.py` 根据 `AI_MCP_ADAPTER` 环境变量分发到 mock 或 stdio
+- 默认仍为 mock adapter（Phase 6.6 权限加固版本）
+- stdio adapter 不提供 per-user 权限保证

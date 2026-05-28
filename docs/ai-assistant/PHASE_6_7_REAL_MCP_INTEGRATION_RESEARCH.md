@@ -325,3 +325,18 @@ Docker sidecar 应后置到 Phase 10。
 | API key 权限过宽        | 可访问 workspace 下所有 project  | 工具白名单二次过滤                     |
 | MCP SDK 未在系统 python | 只在 uvx 环境内                  | 可通过 `uvx --from mcp` 或 pip install |
 | 每次请求启动新进程      | 性能开销                         | 后续可用长驻进程或连接池               |
+
+---
+
+## 16. Phase 6.8 实施记录（2026-05-28）
+
+Phase 6.8 已按本文档调研结论实施，详见 [`PHASE_6_8_REAL_MCP_STDIO_ADAPTER_REPORT.md`](./PHASE_6_8_REAL_MCP_STDIO_ADAPTER_REPORT.md)。
+
+**实施结果**：
+
+- ✅ 新增 `mcp_stdio_adapter.py`（JSON-RPC over subprocess）
+- ✅ `mcp_runtime.py` 添加 adapter dispatch（mock/stdio）
+- ✅ 默认 adapter 为 mock
+- ✅ 不自动 fallback
+- ✅ 安全措施全部实现（shell=False, timeout, 错误脱敏）
+- ⚠️ 未实现后置权限过滤

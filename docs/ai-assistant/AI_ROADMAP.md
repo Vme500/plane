@@ -277,20 +277,37 @@
 
 ---
 
-## Phase 6.8: Real MCP Server stdio Integration (Planned)
+## Phase 6.8: Real MCP Server stdio Integration ✅
 
 **Goal**: Implement stdio adapter to call real plane-mcp-server.
 
-**Planned Changes**:
+**Changes**:
 
-- Add `AI_MCP_ADAPTER` config (mock|stdio)
-- Add `AI_MCP_SERVER_COMMAND` config
-- Add `AI_MCP_SERVER_TIMEOUT` config
-- Implement stdio MCP client adapter
-- Keep mock adapter as fallback
-- Tool allowlist secondary filter
+- Add `mcp_stdio_adapter.py` (JSON-RPC over subprocess)
+- Add `AI_MCP_ADAPTER` config (mock|stdio, default mock)
+- Add `AI_MCP_SERVER_COMMAND`, `AI_MCP_SERVER_ARGS`, `AI_MCP_SERVER_TIMEOUT_SECONDS` config
+- Dispatch in `mcp_runtime.py` based on adapter config
+- Tool allowlist double-check
+- Write operation rejection
+- No automatic fallback
 
-**Risks**: Medium (API key auth, subprocess management)
+**Acceptance Criteria**:
+
+- [x] stdio adapter can spawn plane-mcp-server subprocess
+- [x] MCP JSON-RPC protocol: initialize → tools/call
+- [x] Default adapter is mock (stdio disabled by default)
+- [x] No automatic fallback to mock on stdio failure
+- [x] Tool allowlist enforced
+- [x] Write operations rejected
+- [x] subprocess: shell=False, list args, timeout, process cleanup
+- [x] Error messages sanitized
+- [x] py_compile passes
+- [x] typecheck passes
+- [x] lint passes (0 errors)
+
+**Risks**: Medium (API key auth bypasses user permissions, no post-filtering yet)
+
+**Report**: See [PHASE_6_8_REAL_MCP_STDIO_ADAPTER_REPORT.md](./PHASE_6_8_REAL_MCP_STDIO_ADAPTER_REPORT.md)
 
 ---
 
