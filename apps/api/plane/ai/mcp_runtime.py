@@ -115,6 +115,24 @@ def _get_adapter_type() -> str:
     return os.environ.get("AI_MCP_ADAPTER", "mock").strip().lower()
 
 
+def _serialize_user_safe(user) -> Dict[str, Any]:
+    """
+    Return only safe fields from a Django User object.
+    Never returns password, token, session, auth internals, or API key info.
+    """
+    result: Dict[str, Any] = {"id": str(user.id)}
+    # Include display name if available
+    first = getattr(user, "first_name", "")
+    last = getattr(user, "last_name", "")
+    if first or last:
+        result["display_name"] = f"{first} {last}".strip()
+    # Include email — Plane's get_me API returns it
+    email = getattr(user, "email", "")
+    if email:
+        result["email"] = email
+    return result
+
+
 def _filter_stdio_result(
     user,
     workspace_slug: str,
@@ -126,46 +144,40 @@ def _filter_stdio_result(
     Post-filter stdio MCP results against the current user's permissions.
 
     Phase 6.9 safety gate:
-    - get_me: pass through (no workspace/project data)
-    - list_projects: filter to user's accessible projects
-    - retrieve_project: validate user has access to the specific project
+    - get_me: NEVER uses MCP result. Returns request.user safe fields.
+    - list_projects: NEVER uses MCP result fields. Uses local DB for safe fields.
+    - retrieve_project: NEVER uses MCP result fields. Uses local DB for safe fields.
     - All other tools: blocked (return error)
 
-    Returns:
-        {"success": True, "result": filtered_data} or
-        {"success": False, "error": safe_error_message}
+    SECURITY: raw MCP result is NEVER returned to the frontend.
     """
-    # --- get_me: safe to pass through ---
-    if tool_name == "get_me":
-        return {"success": True, "result": raw_result}
 
-    # --- list_projects: filter to accessible projects ---
+    # --- get_me: always from request.user, never from MCP ---
+    if tool_name == "get_me":
+        # Intentionally ignores MCP result. Returns current Plane session user,
+        # not the API-key owner identity.
+        return {
+            "success": True,
+            "result": _serialize_user_safe(user),
+        }
+
+    # --- list_projects: local DB only, never MCP fields ---
     if tool_name == "list_projects":
         try:
-            # raw_result should be a list of project objects from MCP server
-            if not isinstance(raw_result, list):
-                return {"success": False, "error": PERMISSION_DENIED_ERROR}
-
-            # Get user's accessible project IDs
-            accessible_ids = set(
-                _get_accessible_projects_qs(user, workspace_slug).values_list("id", flat=True)
-            )
-
-            # Filter MCP results to only include accessible projects
-            filtered = []
-            for proj in raw_result:
-                if not isinstance(proj, dict):
-                    continue
-                proj_id = proj.get("id")
-                if proj_id and _uuid_eq(proj_id, accessible_ids):
-                    filtered.append({
-                        "id": proj.get("id"),
-                        "name": proj.get("name"),
-                        "identifier": proj.get("identifier"),
-                        "description": proj.get("description"),
-                    })
-
-            return {"success": True, "result": {"projects": filtered, "count": len(filtered)}}
+            # Query accessible projects from local DB (same as mock adapter)
+            projects = _get_accessible_projects_qs(user, workspace_slug).values(
+                "id", "name", "identifier", "description"
+            )[:50]
+            project_list = [
+                {
+                    "id": str(p["id"]),
+                    "name": p["name"],
+                    "identifier": p["identifier"],
+                    "description": p["description"],
+                }
+                for p in projects
+            ]
+            return {"success": True, "result": {"projects": project_list, "count": len(project_list)}}
         except Exception:
             return {"success": False, "error": PERMISSION_DENIED_ERROR}
 
@@ -388,7 +400,16 @@ def format_mcp_response_text(mcp_result: Dict[str, Any]) -> str:
     description = mcp_result.get("tool_description", "")
 
     if tool == "get_me":
-        return f"User ID: {result.get('user_id')}"
+        # Handle both mock format (user_id) and stdio format (id/display_name/email)
+        user_id = result.get("id") or result.get("user_id", "")
+        name = result.get("display_name", "")
+        email = result.get("email", "")
+        parts = [f"User ID: {user_id}"]
+        if name:
+            parts.append(f"Name: {name}")
+        if email:
+            parts.append(f"Email: {email}")
+        return "\n".join(parts)
 
     elif tool in ["list_projects", "list_work_items", "search_work_items",
                    "list_states", "list_labels", "list_cycles", "list_modules"]:

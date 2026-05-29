@@ -230,3 +230,15 @@ def _filter_stdio_result(user, workspace_slug, tool_name, raw_result, arguments)
 | 文件                               | 变更                                                                                                                                    |
 | ---------------------------------- | --------------------------------------------------------------------------------------------------------------------------------------- |
 | `apps/api/plane/ai/mcp_runtime.py` | 新增 `_filter_stdio_result()`、`_uuid_eq()`、`_STDIO_PASS_THROUGH`、`_STDIO_FILTERABLE`、`_STDIO_BLOCKED_MSG`；更新 stdio dispatch 路径 |
+
+---
+
+## 25. Phase 6.9.1 修复记录（2026-05-28）
+
+Phase 6.9 遗留的数据净化问题已在 Phase 6.9.1 中修复，详见 [`PHASE_6_9_1_MCP_STDIO_RESULT_SANITIZATION_REPORT.md`](./PHASE_6_9_1_MCP_STDIO_RESULT_SANITIZATION_REPORT.md)。
+
+**修复内容**：
+
+- `get_me`：不再 pass-through MCP raw result，改为 `_serialize_user_safe(request.user)`
+- `list_projects`：不再从 MCP result 提取字段，改为本地 DB 查询
+- MCP raw result 永远不返回前端

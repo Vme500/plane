@@ -340,6 +340,34 @@
 
 ---
 
+## Phase 6.9.1: Sanitize stdio Results ✅
+
+**Goal**: Ensure stdio adapter never returns raw MCP result to frontend.
+
+**Changes**:
+
+- `get_me`: now uses `_serialize_user_safe(request.user)` instead of MCP raw result
+- `list_projects`: now queries local DB instead of extracting from MCP raw result
+- `retrieve_project`: already used local DB (no change)
+- Added `_serialize_user_safe()` helper
+- Updated `format_mcp_response_text` for new get_me format
+
+**Acceptance Criteria**:
+
+- [x] Raw MCP result never returned to frontend
+- [x] get_me returns request.user safe fields (id, display_name, email)
+- [x] list_projects returns local DB safe fields
+- [x] retrieve_project returns local DB safe fields
+- [x] py_compile passes
+- [x] typecheck passes
+- [x] lint passes (0 errors)
+
+**Risks**: Low
+
+**Report**: See [PHASE_6_9_1_MCP_STDIO_RESULT_SANITIZATION_REPORT.md](./PHASE_6_9_1_MCP_STDIO_RESULT_SANITIZATION_REPORT.md)
+
+---
+
 ## Phase 7: Write Operation Confirmation
 
 **Goal**: Implement confirmation flow for write operations.

@@ -396,3 +396,17 @@ ENABLE_AI_MCP_RUNTIME=false        # 是否启用 MCP Runtime
 - ✅ fail-closed：所有异常路径返回安全错误
 - ✅ MEMBER 无法获取非 member project 数据
 - ✅ py_compile/typecheck/lint 通过
+
+---
+
+## 17. 第 6.9.1 阶段实施记录（2026-05-28）
+
+第 6.9.1 阶段净化了 stdio adapter 允许工具的返回数据，详见 [`PHASE_6_9_1_MCP_STDIO_RESULT_SANITIZATION_REPORT.md`](./PHASE_6_9_1_MCP_STDIO_RESULT_SANITIZATION_REPORT.md)。
+
+**实际实施范围**：
+
+- ✅ `get_me` 不再返回 MCP raw result，改为 `_serialize_user_safe(request.user)`
+- ✅ `list_projects` 不再从 MCP result 提取字段，改为本地 DB 查询
+- ✅ `retrieve_project` 已使用本地 DB（无需修改）
+- ✅ MCP raw result 永远不返回前端
+- ✅ py_compile/typecheck/lint 通过
