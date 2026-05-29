@@ -539,3 +539,18 @@ ENABLE_AI_MCP_RUNTIME=false        # 是否启用 MCP Runtime
 - ✅ grep 敏感字段检查通过
 - ✅ API contract 未改变
 - ✅ 无需代码修复
+
+---
+
+## 26. 第 8.4.6 阶段验证记录（2026-05-28）
+
+第 8.4.6 阶段验证了 Django 级 model/migration dry-run，详见 [`PHASE_8_4_6_DJANGO_MIGRATION_DRY_RUN_REPORT.md`](./PHASE_8_4_6_DJANGO_MIGRATION_DRY_RUN_REPORT.md)。
+
+**验证结果**：
+
+- ✅ py_compile 通过
+- ✅ migration dependency 链正确（0121 → 0122）
+- ✅ 无 migration 编号冲突
+- ✅ model 与 migration 字段一致
+- ⚠️ Django check/sqlmigrate 因环境缺少依赖无法运行（非代码问题）
+- ✅ 静态验证充分

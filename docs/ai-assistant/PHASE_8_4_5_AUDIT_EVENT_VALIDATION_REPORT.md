@@ -202,3 +202,16 @@
 ## 22. 是否可以进入 Phase 8.5
 
 **是。** model/migration/persistence 安全验证通过。
+
+---
+
+## 23. Phase 8.4.6 验证记录（2026-05-28）
+
+Phase 8.4.6 验证了 Django 级 migration dry-run，详见 [`PHASE_8_4_6_DJANGO_MIGRATION_DRY_RUN_REPORT.md`](./PHASE_8_4_6_DJANGO_MIGRATION_DRY_RUN_REPORT.md)。
+
+**验证结果**：
+
+- ✅ py_compile 通过
+- ✅ migration dependency 链正确
+- ✅ model 与 migration 字段一致
+- ⚠️ Django check 因环境限制无法运行
