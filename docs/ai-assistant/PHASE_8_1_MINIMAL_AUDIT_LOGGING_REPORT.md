@@ -222,3 +222,17 @@
 | `mcp_tool_error`           | MCP 工具执行错误            |
 | `llm_request_error`        | LLM 请求错误                |
 | `unknown_error`            | 未知错误                    |
+
+---
+
+## 19. Phase 8.2 验证记录（2026-05-28）
+
+Phase 8.2 验证了 audit logging 安全性，详见 [`PHASE_8_2_AUDIT_LOGGING_VALIDATION_REPORT.md`](./PHASE_8_2_AUDIT_LOGGING_VALIDATION_REPORT.md)。
+
+**验证结果**：
+
+- ✅ 不记录 raw prompt / raw result / raw MCP result
+- ✅ 不记录 secret / headers / stack trace / env
+- ✅ grep 敏感字段检查通过
+- ✅ API contract 未改变
+- ✅ 无需代码修复

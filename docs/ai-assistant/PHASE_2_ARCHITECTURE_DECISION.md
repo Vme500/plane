@@ -476,3 +476,19 @@ ENABLE_AI_MCP_RUNTIME=false        # 是否启用 MCP Runtime
 - ✅ 不记录 secret / headers / stack trace / env
 - ✅ 不改变 API contract
 - ✅ py_compile 通过
+
+---
+
+## 22. 第 8.2 阶段验证记录（2026-05-28）
+
+第 8.2 阶段验证了 audit logging 安全性，详见 [`PHASE_8_2_AUDIT_LOGGING_VALIDATION_REPORT.md`](./PHASE_8_2_AUDIT_LOGGING_VALIDATION_REPORT.md)。
+
+**验证结果**：
+
+- ✅ 不记录 raw prompt / raw result / raw MCP result
+- ✅ 不记录 token / API key / cookie / password
+- ✅ 不记录 headers / stack trace / env
+- ✅ grep 敏感字段检查通过（所有命中均为安全引用）
+- ✅ error_code 使用预定义常量
+- ✅ API contract 未改变
+- ✅ 无需代码修复
