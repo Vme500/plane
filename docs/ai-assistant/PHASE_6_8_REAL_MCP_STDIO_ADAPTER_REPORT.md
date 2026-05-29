@@ -265,3 +265,17 @@ LOCAL_TO_MCP_TOOL = {
 | ---------------------------------------- | --------------------------------------------------- |
 | `apps/api/plane/ai/mcp_stdio_adapter.py` | 新增：stdio MCP adapter（JSON-RPC over subprocess） |
 | `apps/api/plane/ai/mcp_runtime.py`       | 修改：添加 adapter dispatch（mock/stdio）           |
+
+---
+
+## 26. Phase 6.9 修复记录（2026-05-28）
+
+Phase 6.8 的"未实现后置权限过滤"问题已在 Phase 6.9 中修复，详见 [`PHASE_6_9_MCP_STDIO_SAFETY_VALIDATION_REPORT.md`](./PHASE_6_9_MCP_STDIO_SAFETY_VALIDATION_REPORT.md)。
+
+**修复内容**：
+
+- `get_me`：pass-through（安全）
+- `list_projects`：与 accessible projects 交叉过滤
+- `retrieve_project`：预验证 project access
+- 其他 7 个工具：阻断，返回 clear error
+- 所有 stdio 结果必须经过 `_filter_stdio_result()` 才返回前端

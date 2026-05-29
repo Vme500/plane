@@ -7,9 +7,11 @@ MCP Runtime - Read-only MCP runtime for Plane AI Assistant.
 
 Dispatches to one of two adapters based on AI_MCP_ADAPTER:
   - mock:  Direct DB query (Phase 6, default). Per-user permissions enforced.
-  - stdio: Real plane-mcp-server via subprocess (Phase 6.8).
-           Uses workspace API key — NOT per-user. See security notes in
-           mcp_stdio_adapter.py.
+  - stdio: Real plane-mcp-server via subprocess (Phase 6.8/6.9).
+           Uses workspace API key — NOT per-user.
+           Safety gate: only get_me, list_projects (filtered), retrieve_project
+           (validated) are allowed through. All other tools blocked until
+           per-user permission filtering is implemented.
 
 No automatic fallback: if stdio fails, returns an error (avoids misleading
 the user into thinking data came from the MCP server when it came from mock).
@@ -21,7 +23,28 @@ from typing import Any, Dict, List, Optional
 from plane.license.utils.instance_value import get_configuration_value
 from plane.utils.exception_logger import log_exception
 
-from .mcp_tools import READ_ONLY_TOOLS, execute_tool_mock, get_tool_description, is_tool_allowed
+from .mcp_tools import (
+    READ_ONLY_TOOLS,
+    execute_tool_mock,
+    get_tool_description,
+    is_tool_allowed,
+    _get_accessible_projects_qs,
+    _get_accessible_project_or_none,
+    PERMISSION_DENIED_ERROR,
+)
+
+# --- Stdio safety gate (Phase 6.9) ---
+# Tools that pass through stdio without workspace/project data: safe.
+_STDIO_PASS_THROUGH = {"get_me"}
+
+# Tools that can be post-filtered against user's accessible projects.
+_STDIO_FILTERABLE = {"list_projects", "retrieve_project"}
+
+# Blocked until per-user permission filtering is implemented.
+_STDIO_BLOCKED_MSG = (
+    "This tool is not available via MCP stdio adapter until per-user "
+    "permission filtering is implemented. Use standard chat mode instead."
+)
 
 
 def is_mcp_runtime_enabled() -> bool:
@@ -90,6 +113,101 @@ def parse_mcp_intent(prompt: str) -> Dict[str, Any]:
 def _get_adapter_type() -> str:
     """Read AI_MCP_ADAPTER from env. Default: 'mock'."""
     return os.environ.get("AI_MCP_ADAPTER", "mock").strip().lower()
+
+
+def _filter_stdio_result(
+    user,
+    workspace_slug: str,
+    tool_name: str,
+    raw_result: Any,
+    arguments: Optional[Dict] = None,
+) -> Dict[str, Any]:
+    """
+    Post-filter stdio MCP results against the current user's permissions.
+
+    Phase 6.9 safety gate:
+    - get_me: pass through (no workspace/project data)
+    - list_projects: filter to user's accessible projects
+    - retrieve_project: validate user has access to the specific project
+    - All other tools: blocked (return error)
+
+    Returns:
+        {"success": True, "result": filtered_data} or
+        {"success": False, "error": safe_error_message}
+    """
+    # --- get_me: safe to pass through ---
+    if tool_name == "get_me":
+        return {"success": True, "result": raw_result}
+
+    # --- list_projects: filter to accessible projects ---
+    if tool_name == "list_projects":
+        try:
+            # raw_result should be a list of project objects from MCP server
+            if not isinstance(raw_result, list):
+                return {"success": False, "error": PERMISSION_DENIED_ERROR}
+
+            # Get user's accessible project IDs
+            accessible_ids = set(
+                _get_accessible_projects_qs(user, workspace_slug).values_list("id", flat=True)
+            )
+
+            # Filter MCP results to only include accessible projects
+            filtered = []
+            for proj in raw_result:
+                if not isinstance(proj, dict):
+                    continue
+                proj_id = proj.get("id")
+                if proj_id and _uuid_eq(proj_id, accessible_ids):
+                    filtered.append({
+                        "id": proj.get("id"),
+                        "name": proj.get("name"),
+                        "identifier": proj.get("identifier"),
+                        "description": proj.get("description"),
+                    })
+
+            return {"success": True, "result": {"projects": filtered, "count": len(filtered)}}
+        except Exception:
+            return {"success": False, "error": PERMISSION_DENIED_ERROR}
+
+    # --- retrieve_project: validate access ---
+    if tool_name == "retrieve_project":
+        try:
+            # Get project_id from arguments or from MCP result
+            project_id = (arguments or {}).get("project_id")
+            if not project_id and isinstance(raw_result, dict):
+                project_id = raw_result.get("id")
+            if not project_id:
+                return {"success": False, "error": PERMISSION_DENIED_ERROR}
+
+            project = _get_accessible_project_or_none(user, workspace_slug, str(project_id))
+            if not project:
+                return {"success": False, "error": PERMISSION_DENIED_ERROR}
+
+            # Return only safe fields from validated project
+            return {
+                "success": True,
+                "result": {
+                    "id": str(project.id),
+                    "name": project.name,
+                    "identifier": project.identifier,
+                    "description": project.description,
+                },
+            }
+        except Exception:
+            return {"success": False, "error": PERMISSION_DENIED_ERROR}
+
+    # --- All other tools: blocked in stdio mode ---
+    return {"success": False, "error": _STDIO_BLOCKED_MSG}
+
+
+def _uuid_eq(value, id_set) -> bool:
+    """Check if a string UUID value matches any ID in a set."""
+    try:
+        from uuid import UUID
+        val_uuid = UUID(str(value))
+        return val_uuid in id_set
+    except (ValueError, TypeError, AttributeError):
+        return False
 
 
 def execute_mcp_request(
@@ -177,8 +295,18 @@ def execute_mcp_request(
                 "error": "Internal error executing tool.",
             }
 
-    # --- Stdio adapter (Phase 6.8, real plane-mcp-server) ---
+    # --- Stdio adapter (Phase 6.8/6.9, real plane-mcp-server) ---
     elif adapter == "stdio":
+        # Safety gate: only allow tools that can be post-filtered or are safe
+        if tool_name not in _STDIO_PASS_THROUGH and tool_name not in _STDIO_FILTERABLE:
+            return {
+                "success": False,
+                "mode": "mcp",
+                "adapter": "stdio",
+                "tool": tool_name,
+                "error": _STDIO_BLOCKED_MSG,
+            }
+
         try:
             from .mcp_stdio_adapter import call_tool_stdio
 
@@ -186,16 +314,7 @@ def execute_mcp_request(
                 tool_name=tool_name,
                 arguments=intent.get("params"),
             )
-            if result.get("success"):
-                return {
-                    "success": True,
-                    "mode": "mcp",
-                    "adapter": "stdio",
-                    "tool": tool_name,
-                    "tool_description": get_tool_description(tool_name),
-                    "result": result.get("result"),
-                }
-            else:
+            if not result.get("success"):
                 return {
                     "success": False,
                     "mode": "mcp",
@@ -203,6 +322,35 @@ def execute_mcp_request(
                     "tool": tool_name,
                     "error": result.get("error", "Unknown error"),
                 }
+
+            # Post-filter against user permissions
+            raw_data = result.get("result")
+            filtered = _filter_stdio_result(
+                user=user,
+                workspace_slug=workspace_slug,
+                tool_name=tool_name,
+                raw_result=raw_data,
+                arguments=intent.get("params"),
+            )
+
+            if filtered.get("success"):
+                return {
+                    "success": True,
+                    "mode": "mcp",
+                    "adapter": "stdio",
+                    "tool": tool_name,
+                    "tool_description": get_tool_description(tool_name),
+                    "result": filtered.get("result"),
+                }
+            else:
+                return {
+                    "success": False,
+                    "mode": "mcp",
+                    "adapter": "stdio",
+                    "tool": tool_name,
+                    "error": filtered.get("error", PERMISSION_DENIED_ERROR),
+                }
+
         except Exception as e:
             log_exception(e)
             return {

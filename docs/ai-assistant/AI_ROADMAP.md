@@ -311,6 +311,35 @@
 
 ---
 
+## Phase 6.9: MCP stdio Safety Gate ✅
+
+**Goal**: Gate stdio adapter results by per-user permissions.
+
+**Changes**:
+
+- Add `_filter_stdio_result()` post-permission filter
+- `get_me`: pass-through (no workspace/project data)
+- `list_projects`: filter MCP results against user's accessible projects
+- `retrieve_project`: validate user has access before returning
+- All other stdio tools blocked with clear message
+- Fail-closed: all error paths return safe error
+
+**Acceptance Criteria**:
+
+- [x] stdio results never returned without permission filtering
+- [x] MEMBER cannot access projects they're not a member of
+- [x] Blocked tools return clear error message
+- [x] No automatic fallback
+- [x] py_compile passes
+- [x] typecheck passes
+- [x] lint passes (0 errors)
+
+**Risks**: Low (safety gate blocks unfiltered data)
+
+**Report**: See [PHASE_6_9_MCP_STDIO_SAFETY_VALIDATION_REPORT.md](./PHASE_6_9_MCP_STDIO_SAFETY_VALIDATION_REPORT.md)
+
+---
+
 ## Phase 7: Write Operation Confirmation
 
 **Goal**: Implement confirmation flow for write operations.

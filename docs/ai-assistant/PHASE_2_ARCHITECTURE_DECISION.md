@@ -379,3 +379,20 @@ ENABLE_AI_MCP_RUNTIME=false        # 是否启用 MCP Runtime
 - ✅ 错误脱敏
 - ✅ py_compile/typecheck/lint 通过
 - ⚠️ 未实现后置权限过滤（stdio 使用 workspace API key，不能代表用户）
+
+---
+
+## 16. 第 6.9 阶段实施记录（2026-05-28）
+
+第 6.9 阶段实现了 stdio adapter 安全闸门，详见 [`PHASE_6_9_MCP_STDIO_SAFETY_VALIDATION_REPORT.md`](./PHASE_6_9_MCP_STDIO_SAFETY_VALIDATION_REPORT.md)。
+
+**实际实施范围**：
+
+- ✅ 实现 `_filter_stdio_result()` 后置权限过滤
+- ✅ `get_me` pass-through（无 workspace/project 数据）
+- ✅ `list_projects` 与 accessible projects 交叉过滤
+- ✅ `retrieve_project` 预验证 project access
+- ✅ 其他 7 个 stdio 工具阻断
+- ✅ fail-closed：所有异常路径返回安全错误
+- ✅ MEMBER 无法获取非 member project 数据
+- ✅ py_compile/typecheck/lint 通过
