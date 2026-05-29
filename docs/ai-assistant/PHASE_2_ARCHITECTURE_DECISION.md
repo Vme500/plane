@@ -554,3 +554,19 @@ ENABLE_AI_MCP_RUNTIME=false        # 是否启用 MCP Runtime
 - ✅ model 与 migration 字段一致
 - ⚠️ Django check/sqlmigrate 因环境缺少依赖无法运行（非代码问题）
 - ✅ 静态验证充分
+
+---
+
+## 27. 第 8.5 阶段设计记录（2026-05-28）
+
+第 8.5 阶段设计了 admin-only AI audit read API，详见 [`PHASE_8_5_AUDIT_READ_API_DESIGN.md`](./PHASE_8_5_AUDIT_READ_API_DESIGN.md)。
+
+**设计结论**：
+
+- ✅ `GET /api/workspaces/<slug>/ai-audit-events/`
+- ✅ ADMIN only（MEMBER/GUEST = 403）
+- ✅ 12 query filters + pagination + ordering
+- ✅ 19 个安全响应字段
+- ✅ 不返回 raw prompt / result / secret / headers / stack trace
+- ✅ 90 天最大时间范围
+- ✅ retention hard delete 策略

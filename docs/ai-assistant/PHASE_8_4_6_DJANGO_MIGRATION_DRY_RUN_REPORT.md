@@ -110,3 +110,14 @@
 ## 13. 是否可以进入 Phase 8.5 admin-only read API 设计
 
 **是。** 静态验证通过，migration graph 正确，model/migration 字段一致。
+
+---
+
+## 14. Phase 8.5 设计记录（2026-05-28）
+
+Phase 8.5 设计了 admin-only AI audit read API，详见 [`PHASE_8_5_AUDIT_READ_API_DESIGN.md`](./PHASE_8_5_AUDIT_READ_API_DESIGN.md)。
+
+**设计结论**：
+
+- `GET /api/workspaces/<slug>/ai-audit-events/`
+- ADMIN only + pagination + 12 filters + 19 safe response fields

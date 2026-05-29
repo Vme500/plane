@@ -562,6 +562,25 @@
 
 ---
 
+## Phase 8.5: Admin-Only Audit Read API Design ✅
+
+**Goal**: Design admin-only AI audit read API.
+
+**Design**:
+
+- `GET /api/workspaces/<slug>/ai-audit-events/`
+- ADMIN only (MEMBER/GUEST = 403)
+- 12 query filters (event, mode, adapter, tool_name, etc.)
+- Pagination (20 per page, max 100)
+- Ordering: created_at DESC
+- 19 safe response fields
+- No raw prompt, result, secrets, headers, stack trace
+- 90-day max time range
+
+**Report**: See [PHASE_8_5_AUDIT_READ_API_DESIGN.md](./PHASE_8_5_AUDIT_READ_API_DESIGN.md)
+
+---
+
 ## Phase 9: Write Operation Confirmation
 
 **Goal**: Implement confirmation flow for write operations.
