@@ -500,6 +500,34 @@
 
 ---
 
+## Phase 8.4: Audit Event Persistence ✅
+
+**Goal**: Implement AIAuditEvent database model and write helper.
+
+**Changes**:
+
+- New `AIAuditEvent` model in `db/models/ai.py`
+- New migration `0122_aiauditevent.py`
+- New `create_ai_audit_event()` helper (fail-safe, writes both logger + DB)
+- Integrated into existing audit logging calls
+- 3 core indexes: workspace+created_at, actor+created_at, event+created_at
+
+**Acceptance Criteria**:
+
+- [x] AIAuditEvent model with 19 safe fields
+- [x] Migration generated
+- [x] create_ai_audit_event() helper (fail-safe)
+- [x] DB write failure does not affect AI main flow
+- [x] No raw prompt, result, secrets stored
+- [x] No audit API or UI added
+- [x] py_compile passes
+
+**Risks**: Low (fail-safe DB write, no new API/UI)
+
+**Report**: See [PHASE_8_4_AUDIT_EVENT_MODEL_REPORT.md](./PHASE_8_4_AUDIT_EVENT_MODEL_REPORT.md)
+
+---
+
 ## Phase 9: Write Operation Confirmation
 
 **Goal**: Implement confirmation flow for write operations.

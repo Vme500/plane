@@ -130,3 +130,80 @@ def now_ms() -> float:
 def duration_since(start_ms: float) -> int:
     """Return elapsed milliseconds since start_ms."""
     return int(time.monotonic() * 1000 - start_ms)
+
+
+def create_ai_audit_event(
+    *,
+    workspace_slug: str,
+    actor_id: Optional[str],
+    event: str,
+    mode: Optional[str] = None,
+    adapter: Optional[str] = None,
+    tool_name: Optional[str] = None,
+    tool_status: Optional[str] = None,
+    readonly: bool = True,
+    permission_filtered: Optional[bool] = None,
+    raw_result_returned: bool = False,
+    write_operation: bool = False,
+    duration_ms: Optional[int] = None,
+    item_count: Optional[int] = None,
+    prompt_length: Optional[int] = None,
+    error_code: Optional[str] = None,
+    source: str = "pi-chat",
+    request_id: Optional[str] = None,
+) -> None:
+    """
+    Persist an AI audit event to the database. Fail-safe: never raises.
+
+    Calls log_ai_event() for structured logging AND attempts DB write.
+    DB write failure is silently logged to the server logger, never to the client.
+    """
+    # Always log to structured logger first
+    log_ai_event(
+        event=event,
+        workspace_slug=workspace_slug,
+        user_id=actor_id,
+        mode=mode,
+        adapter=adapter,
+        tool_name=tool_name,
+        tool_status=tool_status,
+        readonly=readonly,
+        permission_filtered=permission_filtered,
+        raw_result_returned=raw_result_returned,
+        write_operation=write_operation,
+        duration_ms=duration_ms,
+        item_count=item_count,
+        error_code=error_code,
+        source=source,
+    )
+
+    # Attempt DB write — fail-safe
+    try:
+        from plane.db.models import AIAuditEvent, Workspace
+
+        workspace = Workspace.objects.filter(slug=workspace_slug).first()
+        if not workspace:
+            return
+
+        AIAuditEvent.objects.create(
+            workspace=workspace,
+            actor_id=actor_id if actor_id else None,
+            event=event,
+            mode=mode,
+            adapter=adapter,
+            tool_name=tool_name,
+            tool_status=tool_status,
+            readonly=readonly,
+            permission_filtered=permission_filtered,
+            raw_result_returned=raw_result_returned,
+            write_operation=write_operation,
+            duration_ms=duration_ms,
+            item_count=item_count,
+            prompt_length=prompt_length,
+            error_code=error_code,
+            source=source,
+            request_id=request_id,
+        )
+    except Exception as e:
+        # DB write failure must not affect AI/MCP main flow
+        logger.warning(f"Failed to persist AI audit event: {type(e).__name__}")

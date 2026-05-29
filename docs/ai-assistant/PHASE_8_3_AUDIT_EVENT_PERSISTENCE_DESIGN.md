@@ -290,3 +290,16 @@ def create_ai_audit_event(
 ## 16. 是否可以进入写操作阶段
 
 **否。** 建议先完成审计日志持久化，再考虑写操作。
+
+---
+
+## 17. Phase 8.4 实施记录（2026-05-28）
+
+Phase 8.4 已按本文档设计实施，详见 [`PHASE_8_4_AUDIT_EVENT_MODEL_REPORT.md`](./PHASE_8_4_AUDIT_EVENT_MODEL_REPORT.md)。
+
+**实施结果**：
+
+- ✅ AIAuditEvent model 实现
+- ✅ migration 生成（0122_aiauditevent.py）
+- ✅ `create_ai_audit_event()` helper（fail-safe）
+- ✅ 集成到现有 audit logging 调用点

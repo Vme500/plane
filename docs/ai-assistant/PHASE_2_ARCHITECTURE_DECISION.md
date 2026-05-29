@@ -507,3 +507,20 @@ ENABLE_AI_MCP_RUNTIME=false        # 是否启用 MCP Runtime
 - ✅ 推荐方案 B：显式 `create_ai_audit_event()` helper（fail-safe）
 - ✅ ADMIN-only 查看权限（Phase 8.5+）
 - ✅ 不记录 raw prompt / result / secret / headers / stack trace / env
+
+---
+
+## 24. 第 8.4 阶段实施记录（2026-05-28）
+
+第 8.4 阶段实现了 AIAuditEvent 数据库持久化，详见 [`PHASE_8_4_AUDIT_EVENT_MODEL_REPORT.md`](./PHASE_8_4_AUDIT_EVENT_MODEL_REPORT.md)。
+
+**实际实施范围**：
+
+- ✅ 新增 AIAuditEvent model（`db/models/ai.py`）
+- ✅ 新增 migration（`0122_aiauditevent.py`）
+- ✅ 新增 `create_ai_audit_event()` helper（fail-safe：logger + DB）
+- ✅ 集成到现有 audit logging 调用点
+- ✅ DB 写失败不影响 AI 主流程
+- ✅ 19 个安全字段，3 个核心索引
+- ✅ py_compile 通过
+- ⏳ 未运行 migrate（当前环境无 Django）

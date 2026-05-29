@@ -24,7 +24,7 @@ from ..base import BaseAPIView
 
 # MCP runtime imports
 from plane.ai.mcp_runtime import execute_mcp_request, format_mcp_response_text, build_mcp_preview
-from plane.ai.audit_logger import log_ai_event, safe_error_code, now_ms, duration_since, ERROR_INVALID_MODE, ERROR_LLM_REQUEST_ERROR
+from plane.ai.audit_logger import create_ai_audit_event, safe_error_code, now_ms, duration_since, ERROR_INVALID_MODE, ERROR_LLM_REQUEST_ERROR
 
 
 class LLMProvider:
@@ -209,10 +209,10 @@ class WorkspaceGPTIntegrationEndpoint(BaseAPIView):
             # MCP mode - execute read-only MCP tools
             prompt = request.data.get("prompt", "")
 
-            log_ai_event(
+            create_ai_audit_event(
                 event="ai.request",
                 workspace_slug=slug,
-                user_id=user_id,
+                actor_id=user_id,
                 mode="mcp",
                 prompt_length=len(prompt) if prompt else 0,
             )
@@ -235,10 +235,10 @@ class WorkspaceGPTIntegrationEndpoint(BaseAPIView):
             safety_info = mcp_preview.get("safety", {})
             items = mcp_preview.get("items", [])
 
-            log_ai_event(
+            create_ai_audit_event(
                 event="ai.tool.call" if mcp_result.get("success") else "ai.tool.error",
                 workspace_slug=slug,
-                user_id=user_id,
+                actor_id=user_id,
                 mode="mcp",
                 adapter=mcp_preview.get("adapter", "unknown"),
                 tool_name=tool_info.get("name"),
@@ -261,7 +261,7 @@ class WorkspaceGPTIntegrationEndpoint(BaseAPIView):
 
         # Standard mode - original prompt-response behavior
         prompt = request.data.get("prompt", False)
-        log_ai_event(
+        create_ai_audit_event(
             event="ai.request",
             workspace_slug=slug,
             user_id=user_id,
@@ -271,10 +271,10 @@ class WorkspaceGPTIntegrationEndpoint(BaseAPIView):
 
         text, error = get_llm_response(task, prompt, api_key, model, provider)
         if not text and error:
-            log_ai_event(
+            create_ai_audit_event(
                 event="ai.request.error",
                 workspace_slug=slug,
-                user_id=user_id,
+                actor_id=user_id,
                 mode="standard",
                 error_code=ERROR_LLM_REQUEST_ERROR,
                 duration_ms=duration_since(start),
@@ -284,7 +284,7 @@ class WorkspaceGPTIntegrationEndpoint(BaseAPIView):
                 status=status.HTTP_500_INTERNAL_SERVER_ERROR,
             )
 
-        log_ai_event(
+        create_ai_audit_event(
             event="ai.request.success",
             workspace_slug=slug,
             user_id=user_id,
