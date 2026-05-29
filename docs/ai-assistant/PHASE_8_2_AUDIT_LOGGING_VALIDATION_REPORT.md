@@ -200,3 +200,15 @@
 ## 22. 是否可以进入写操作阶段
 
 **否。** 建议先完成审计日志持久化，再考虑写操作。
+
+---
+
+## 23. Phase 8.3 设计记录（2026-05-28）
+
+Phase 8.3 设计了 AIAuditEvent 数据库持久化，详见 [`PHASE_8_3_AUDIT_EVENT_PERSISTENCE_DESIGN.md`](./PHASE_8_3_AUDIT_EVENT_PERSISTENCE_DESIGN.md)。
+
+**设计结论**：
+
+- AIAuditEvent 继承 BaseModel，19 个安全字段
+- 90 天默认保留期
+- 推荐显式 `create_ai_audit_event()` helper（fail-safe）

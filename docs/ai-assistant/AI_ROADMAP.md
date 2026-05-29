@@ -483,6 +483,23 @@
 
 ---
 
+## Phase 8.3: Audit Event Persistence Design ✅
+
+**Goal**: Design AIAuditEvent database persistence model.
+
+**Design**:
+
+- New `AIAuditEvent` model inheriting `BaseModel`
+- 19 safe fields (no raw prompt, result, secrets, headers, stack trace)
+- 3 core indexes: workspace+created_at, actor+created_at, event+created_at
+- 90-day default retention
+- Explicit `create_ai_audit_event()` helper (fail-safe)
+- ADMIN-only viewing permission (Phase 8.5+)
+
+**Report**: See [PHASE_8_3_AUDIT_EVENT_PERSISTENCE_DESIGN.md](./PHASE_8_3_AUDIT_EVENT_PERSISTENCE_DESIGN.md)
+
+---
+
 ## Phase 9: Write Operation Confirmation
 
 **Goal**: Implement confirmation flow for write operations.

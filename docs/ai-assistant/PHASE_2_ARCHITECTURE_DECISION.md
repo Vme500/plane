@@ -492,3 +492,18 @@ ENABLE_AI_MCP_RUNTIME=false        # 是否启用 MCP Runtime
 - ✅ error_code 使用预定义常量
 - ✅ API contract 未改变
 - ✅ 无需代码修复
+
+---
+
+## 23. 第 8.3 阶段设计记录（2026-05-28）
+
+第 8.3 阶段设计了 AIAuditEvent 数据库持久化，详见 [`PHASE_8_3_AUDIT_EVENT_PERSISTENCE_DESIGN.md`](./PHASE_8_3_AUDIT_EVENT_PERSISTENCE_DESIGN.md)。
+
+**设计结论**：
+
+- ✅ AIAuditEvent 继承 BaseModel，19 个安全字段
+- ✅ 3 个核心索引：workspace+created_at, actor+created_at, event+created_at
+- ✅ 90 天默认保留期
+- ✅ 推荐方案 B：显式 `create_ai_audit_event()` helper（fail-safe）
+- ✅ ADMIN-only 查看权限（Phase 8.5+）
+- ✅ 不记录 raw prompt / result / secret / headers / stack trace / env
