@@ -398,7 +398,31 @@
 
 ---
 
-## Phase 8: Write Operation Confirmation
+## Phase 7.5: MCP Tool Preview Validation ✅
+
+**Goal**: Validate MCP tool preview API contract and safety.
+
+**Findings**:
+
+- mcp_preview contract stable (all required fields present)
+- mcp_result removed from response
+- standard prompt-response unaffected
+- No raw JSON or secrets exposed
+- metadata field whitelist correct
+- mock adapter working correctly
+- stdio adapter safety gate working
+- Write operations still hard-rejected
+- No code fixes needed
+
+**Risks**: None (validation only)
+
+**Report**: See [PHASE_7_5_MCP_TOOL_PREVIEW_VALIDATION_REPORT.md](./PHASE_7_5_MCP_TOOL_PREVIEW_VALIDATION_REPORT.md)
+
+---
+
+## Phase 8: Audit Logging
+
+**Goal**: Implement audit logging for MCP tool calls.
 
 **Goal**: Implement confirmation flow for write operations.
 

@@ -425,3 +425,21 @@ ENABLE_AI_MCP_RUNTIME=false        # 是否启用 MCP Runtime
 - ✅ 不展示 raw JSON / secret
 - ✅ standard chat 模式不受影响
 - ✅ py_compile/typecheck/lint 通过
+
+---
+
+## 19. 第 7.5 阶段验证记录（2026-05-28）
+
+第 7.5 阶段验证了 MCP Tool Preview API contract 和安全性，详见 [`PHASE_7_5_MCP_TOOL_PREVIEW_VALIDATION_REPORT.md`](./PHASE_7_5_MCP_TOOL_PREVIEW_VALIDATION_REPORT.md)。
+
+**验证结果**：
+
+- ✅ mcp_preview contract 稳定（所有必需字段存在）
+- ✅ mcp_result 已从响应中移除
+- ✅ standard prompt-response 不受影响
+- ✅ 不展示 raw JSON / secret
+- ✅ metadata 字段白名单正确
+- ✅ mock adapter 正常
+- ✅ stdio adapter 安全闸门正常
+- ✅ 写操作仍硬拒绝
+- ✅ 无需代码修复

@@ -170,3 +170,16 @@ MCP Tool Preview 区块包含：
 - Phase 7.2：items 交互（点击跳转到 project/work item）
 - Phase 8：审计日志
 - Phase 9：写操作确认机制
+
+---
+
+## 18. Phase 7.5 验证记录（2026-05-28）
+
+Phase 7.5 验证了 MCP Tool Preview API contract 和安全性，详见 [`PHASE_7_5_MCP_TOOL_PREVIEW_VALIDATION_REPORT.md`](./PHASE_7_5_MCP_TOOL_PREVIEW_VALIDATION_REPORT.md)。
+
+**验证结果**：
+
+- ✅ mcp_preview contract 稳定
+- ✅ mcp_result 已移除
+- ✅ 不展示 raw JSON / secret
+- ✅ 无需代码修复
