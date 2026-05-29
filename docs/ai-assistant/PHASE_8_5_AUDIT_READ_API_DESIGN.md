@@ -266,3 +266,16 @@ class ActorLiteSerializer(serializers.ModelSerializer):
 ## 16. 是否可以进入 Phase 8.6
 
 **是。** 设计完成，可实现 serializer + endpoint + route。
+
+---
+
+## 17. Phase 8.6 实施记录（2026-05-28）
+
+Phase 8.6 已按本文档设计实施，详见 [`PHASE_8_6_AUDIT_READ_API_IMPLEMENTATION_REPORT.md`](./PHASE_8_6_AUDIT_READ_API_IMPLEMENTATION_REPORT.md)。
+
+**实施结果**：
+
+- ✅ AIAuditEventSerializer + ActorLiteSerializer
+- ✅ AIAuditEventListEndpoint（GET, ADMIN only）
+- ✅ URL route + 12 filters + pagination
+- ✅ py_compile 通过

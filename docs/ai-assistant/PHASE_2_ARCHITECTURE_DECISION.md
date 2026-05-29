@@ -570,3 +570,20 @@ ENABLE_AI_MCP_RUNTIME=false        # 是否启用 MCP Runtime
 - ✅ 不返回 raw prompt / result / secret / headers / stack trace
 - ✅ 90 天最大时间范围
 - ✅ retention hard delete 策略
+
+---
+
+## 28. 第 8.6 阶段实施记录（2026-05-28）
+
+第 8.6 阶段实现了 admin-only AI audit read API，详见 [`PHASE_8_6_AUDIT_READ_API_IMPLEMENTATION_REPORT.md`](./PHASE_8_6_AUDIT_READ_API_IMPLEMENTATION_REPORT.md)。
+
+**实际实施范围**：
+
+- ✅ 新增 `AIAuditEventSerializer` + `ActorLiteSerializer`
+- ✅ 新增 `AIAuditEventListEndpoint`（GET, ADMIN only）
+- ✅ URL route: `GET /api/workspaces/<slug>/ai-audit-events/`
+- ✅ 12 个安全 query filters
+- ✅ pagination（20/page, max 100）
+- ✅ 30 天默认 / 90 天最大时间窗口
+- ✅ py_compile 通过
+- ✅ 不改变 existing API contract

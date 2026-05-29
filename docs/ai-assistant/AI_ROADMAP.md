@@ -581,6 +581,35 @@
 
 ---
 
+## Phase 8.6: Admin-Only Audit Read API ✅
+
+**Goal**: Implement admin-only AI audit read API.
+
+**Changes**:
+
+- New `AIAuditEventSerializer` + `ActorLiteSerializer`
+- New `AIAuditEventListEndpoint` (GET, ADMIN only)
+- URL route: `GET /api/workspaces/<slug>/ai-audit-events/`
+- 12 safe query filters
+- Pagination (20/page, max 100)
+- 30-day default / 90-day max time window
+- 19 safe response fields
+
+**Acceptance Criteria**:
+
+- [x] ADMIN only access
+- [x] MEMBER/GUEST = 403
+- [x] Workspace scoped
+- [x] No raw prompt, result, secrets returned
+- [x] Pagination + filters + ordering
+- [x] py_compile passes
+- [x] No migration needed
+- [x] No existing API contract changed
+
+**Report**: See [PHASE_8_6_AUDIT_READ_API_IMPLEMENTATION_REPORT.md](./PHASE_8_6_AUDIT_READ_API_IMPLEMENTATION_REPORT.md)
+
+---
+
 ## Phase 9: Write Operation Confirmation
 
 **Goal**: Implement confirmation flow for write operations.
