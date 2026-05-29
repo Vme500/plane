@@ -420,9 +420,38 @@
 
 ---
 
-## Phase 8: Audit Logging
+## Phase 8.0: Audit Logging Research ✅
 
-**Goal**: Implement audit logging for MCP tool calls.
+**Goal**: Research and design AI/MCP audit logging.
+
+**Findings**:
+
+- No standalone AuditLog model exists in Plane
+- `IssueActivity` is issue-scoped only
+- `APIActivityLog` exists for external API requests
+- `RequestLoggerMiddleware` logs all API requests
+- Recommended: Phase 8.1 uses Python logger (no migration needed)
+- Database persistence deferred to Phase 8.2
+
+**Report**: See [PHASE_8_0_AUDIT_LOGGING_RESEARCH.md](./PHASE_8_0_AUDIT_LOGGING_RESEARCH.md)
+
+---
+
+## Phase 8.1: AI Audit Logging (Planned)
+
+**Goal**: Implement structured audit logging via Python logger.
+
+**Planned Changes**:
+
+- New `apps/api/plane/ai/audit.py` module
+- Structured JSON log events for all AI/MCP operations
+- Log events: request, tool call, blocked, error, rejected
+- Never logs raw prompt, raw result, or secrets
+- No migration, no Docker changes
+
+---
+
+## Phase 9: Write Operation Confirmation
 
 **Goal**: Implement confirmation flow for write operations.
 

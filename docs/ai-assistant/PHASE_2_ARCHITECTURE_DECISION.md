@@ -443,3 +443,17 @@ ENABLE_AI_MCP_RUNTIME=false        # 是否启用 MCP Runtime
 - ✅ stdio adapter 安全闸门正常
 - ✅ 写操作仍硬拒绝
 - ✅ 无需代码修复
+
+---
+
+## 20. 第 8.0 阶段调研记录（2026-05-28）
+
+第 8.0 阶段完成了 AI/MCP audit logging 调研，详见 [`PHASE_8_0_AUDIT_LOGGING_RESEARCH.md`](./PHASE_8_0_AUDIT_LOGGING_RESEARCH.md)。
+
+**调研结论**：
+
+- ✅ Plane 现有 `IssueActivity`（issue-scoped）、`APIActivityLog`（API 请求）、`RequestLoggerMiddleware`
+- ✅ 没有通用 AuditLog model
+- ✅ 推荐方案 B：Python logger 结构化安全日志（不需要 migration）
+- ✅ 定义了 audit event schema（字段白名单 + 禁止记录字段）
+- ✅ 可进入 Phase 8.1 实现

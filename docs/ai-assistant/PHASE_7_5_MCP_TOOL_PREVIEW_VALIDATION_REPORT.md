@@ -193,3 +193,14 @@ stdio blocked tools 返回：
 ## 20. 是否可以进入写操作阶段
 
 **否。** 建议先完成 audit logging，再考虑写操作。
+
+---
+
+## 21. Phase 8.0 调研记录（2026-05-28）
+
+Phase 8.0 完成了 AI/MCP audit logging 调研，详见 [`PHASE_8_0_AUDIT_LOGGING_RESEARCH.md`](./PHASE_8_0_AUDIT_LOGGING_RESEARCH.md)。
+
+**关键结论**：
+
+- 推荐方案 B：Python logger 结构化安全日志（不需要 migration）
+- 后续可升级到数据库持久化 + API 查询
