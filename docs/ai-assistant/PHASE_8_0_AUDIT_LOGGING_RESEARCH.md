@@ -312,3 +312,17 @@ Phase 8.2（数据库持久化）需要 migration。
 ## 14. 是否可以进入写操作阶段
 
 **否。** 建议先完成 audit logging，再考虑写操作。
+
+---
+
+## 15. Phase 8.1 实施记录（2026-05-28）
+
+Phase 8.1 已按本文档方案 B 实施，详见 [`PHASE_8_1_MINIMAL_AUDIT_LOGGING_REPORT.md`](./PHASE_8_1_MINIMAL_AUDIT_LOGGING_REPORT.md)。
+
+**实施结果**：
+
+- ✅ 新增 `apps/api/plane/ai/audit_logger.py`（`plane.ai.audit` logger）
+- ✅ 结构化 JSON 日志事件
+- ✅ 不记录 raw prompt / raw result / secret
+- ✅ 错误使用 error_code
+- ✅ 不需要 migration

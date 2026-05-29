@@ -24,6 +24,7 @@ from ..base import BaseAPIView
 
 # MCP runtime imports
 from plane.ai.mcp_runtime import execute_mcp_request, format_mcp_response_text, build_mcp_preview
+from plane.ai.audit_logger import log_ai_event, safe_error_code, now_ms, duration_since, ERROR_INVALID_MODE, ERROR_LLM_REQUEST_ERROR
 
 
 class LLMProvider:
@@ -187,6 +188,8 @@ class GPTIntegrationEndpoint(BaseAPIView):
 class WorkspaceGPTIntegrationEndpoint(BaseAPIView):
     @allow_permission(allowed_roles=[ROLE.ADMIN, ROLE.MEMBER], level="WORKSPACE")
     def post(self, request, slug):
+        start = now_ms()
+        user_id = str(request.user.id) if request.user else "unknown"
         api_key, model, provider = get_llm_config()
 
         if not api_key or not model or not provider:
@@ -206,6 +209,14 @@ class WorkspaceGPTIntegrationEndpoint(BaseAPIView):
             # MCP mode - execute read-only MCP tools
             prompt = request.data.get("prompt", "")
 
+            log_ai_event(
+                event="ai.request",
+                workspace_slug=slug,
+                user_id=user_id,
+                mode="mcp",
+                prompt_length=len(prompt) if prompt else 0,
+            )
+
             mcp_result = execute_mcp_request(
                 prompt=prompt,
                 workspace_slug=slug,
@@ -219,6 +230,25 @@ class WorkspaceGPTIntegrationEndpoint(BaseAPIView):
             # Build structured preview for frontend (never includes raw result)
             mcp_preview = build_mcp_preview(mcp_result)
 
+            # Audit: log tool-level event based on mcp_preview
+            tool_info = mcp_preview.get("tool", {})
+            safety_info = mcp_preview.get("safety", {})
+            items = mcp_preview.get("items", [])
+
+            log_ai_event(
+                event="ai.tool.call" if mcp_result.get("success") else "ai.tool.error",
+                workspace_slug=slug,
+                user_id=user_id,
+                mode="mcp",
+                adapter=mcp_preview.get("adapter", "unknown"),
+                tool_name=tool_info.get("name"),
+                tool_status=tool_info.get("status"),
+                permission_filtered=safety_info.get("permission_filtered"),
+                item_count=len(items),
+                duration_ms=duration_since(start),
+                error_code=safe_error_code(mcp_result.get("error")) if not mcp_result.get("success") else None,
+            )
+
             return Response(
                 {
                     "response": response_text,
@@ -230,12 +260,37 @@ class WorkspaceGPTIntegrationEndpoint(BaseAPIView):
             )
 
         # Standard mode - original prompt-response behavior
-        text, error = get_llm_response(task, request.data.get("prompt", False), api_key, model, provider)
+        prompt = request.data.get("prompt", False)
+        log_ai_event(
+            event="ai.request",
+            workspace_slug=slug,
+            user_id=user_id,
+            mode="standard",
+            prompt_length=len(prompt) if prompt else 0,
+        )
+
+        text, error = get_llm_response(task, prompt, api_key, model, provider)
         if not text and error:
+            log_ai_event(
+                event="ai.request.error",
+                workspace_slug=slug,
+                user_id=user_id,
+                mode="standard",
+                error_code=ERROR_LLM_REQUEST_ERROR,
+                duration_ms=duration_since(start),
+            )
             return Response(
                 {"error": "An internal error has occurred."},
                 status=status.HTTP_500_INTERNAL_SERVER_ERROR,
             )
+
+        log_ai_event(
+            event="ai.request.success",
+            workspace_slug=slug,
+            user_id=user_id,
+            mode="standard",
+            duration_ms=duration_since(start),
+        )
 
         return Response(
             {

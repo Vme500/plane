@@ -457,3 +457,22 @@ ENABLE_AI_MCP_RUNTIME=false        # 是否启用 MCP Runtime
 - ✅ 推荐方案 B：Python logger 结构化安全日志（不需要 migration）
 - ✅ 定义了 audit event schema（字段白名单 + 禁止记录字段）
 - ✅ 可进入 Phase 8.1 实现
+
+---
+
+## 21. 第 8.1 阶段实施记录（2026-05-28）
+
+第 8.1 阶段实现了最小 AI/MCP audit logging，详见 [`PHASE_8_1_MINIMAL_AUDIT_LOGGING_REPORT.md`](./PHASE_8_1_MINIMAL_AUDIT_LOGGING_REPORT.md)。
+
+**实际实施范围**：
+
+- ✅ 新增 `apps/api/plane/ai/audit_logger.py`（`plane.ai.audit` logger）
+- ✅ endpoint 记录 `ai.request`、`ai.request.success`、`ai.request.error`
+- ✅ endpoint 记录 MCP tool-level 事件（`ai.tool.call`、`ai.tool.error`）
+- ✅ mcp_runtime 记录 `ai.tool.blocked`、`ai.tool.rejected`
+- ✅ 只记录 prompt_length，不记录 raw prompt
+- ✅ 只记录 item_count，不记录 raw result
+- ✅ 错误使用 error_code，不记录 raw exception
+- ✅ 不记录 secret / headers / stack trace / env
+- ✅ 不改变 API contract
+- ✅ py_compile 通过

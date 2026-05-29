@@ -437,16 +437,32 @@
 
 ---
 
-## Phase 8.1: AI Audit Logging (Planned)
+## Phase 8.1: AI Audit Logging ✅
 
 **Goal**: Implement structured audit logging via Python logger.
 
-**Planned Changes**:
+**Changes**:
 
-- New `apps/api/plane/ai/audit.py` module
-- Structured JSON log events for all AI/MCP operations
-- Log events: request, tool call, blocked, error, rejected
+- New `apps/api/plane/ai/audit_logger.py` module
+- Structured JSON log events via `plane.ai.audit` logger
+- Events: ai.request, ai.tool.call, ai.tool.blocked, ai.tool.error, ai.tool.rejected
 - Never logs raw prompt, raw result, or secrets
+- No migration, no Docker changes
+
+**Acceptance Criteria**:
+
+- [x] audit_logger.py module created
+- [x] Structured JSON log events
+- [x] Events logged at endpoint and mcp_runtime levels
+- [x] Never logs raw prompt or raw result
+- [x] Never logs secrets
+- [x] Error codes instead of raw exception messages
+- [x] No API contract changes
+- [x] No migration needed
+- [x] py_compile passes
+
+**Report**: See [PHASE_8_1_MINIMAL_AUDIT_LOGGING_REPORT.md](./PHASE_8_1_MINIMAL_AUDIT_LOGGING_REPORT.md)
+
 - No migration, no Docker changes
 
 ---

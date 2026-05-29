@@ -32,6 +32,14 @@ from .mcp_tools import (
     _get_accessible_project_or_none,
     PERMISSION_DENIED_ERROR,
 )
+from .audit_logger import (
+    log_ai_event,
+    safe_error_code,
+    ERROR_MCP_RUNTIME_DISABLED,
+    ERROR_TOOL_NOT_ALLOWED,
+    ERROR_STDIO_RESULT_BLOCKED,
+    ERROR_UNSUPPORTED_ADAPTER,
+)
 
 # --- Stdio safety gate (Phase 6.9) ---
 # Tools that pass through stdio without workspace/project data: safe.
@@ -243,6 +251,13 @@ def execute_mcp_request(
     """
     # Check if MCP runtime is enabled
     if not is_mcp_runtime_enabled():
+        log_ai_event(
+            event="ai.tool.blocked",
+            workspace_slug=workspace_slug,
+            user_id=str(user.id) if user else None,
+            mode="mcp",
+            error_code=ERROR_MCP_RUNTIME_DISABLED,
+        )
         return {
             "success": False,
             "error": "MCP runtime is not enabled. Set ENABLE_AI_MCP_RUNTIME=1 to enable.",
@@ -254,6 +269,13 @@ def execute_mcp_request(
     tool_name = intent.get("tool_name")
 
     if not tool_name:
+        log_ai_event(
+            event="ai.tool.blocked",
+            workspace_slug=workspace_slug,
+            user_id=str(user.id) if user else None,
+            mode="mcp",
+            error_code=ERROR_TOOL_NOT_ALLOWED,
+        )
         return {
             "success": False,
             "error": "Could not determine which MCP tool to call. Try asking about projects, work items, states, labels, cycles, or modules.",
@@ -263,6 +285,16 @@ def execute_mcp_request(
 
     # Validate tool is allowed
     if not is_tool_allowed(tool_name):
+        log_ai_event(
+            event="ai.tool.rejected",
+            workspace_slug=workspace_slug,
+            user_id=str(user.id) if user else None,
+            mode="mcp",
+            tool_name=tool_name,
+            tool_status="rejected",
+            write_operation=True,
+            error_code=ERROR_TOOL_NOT_ALLOWED,
+        )
         return {
             "success": False,
             "error": f"Tool '{tool_name}' is not allowed in read-only mode.",
@@ -311,6 +343,16 @@ def execute_mcp_request(
     elif adapter == "stdio":
         # Safety gate: only allow tools that can be post-filtered or are safe
         if tool_name not in _STDIO_PASS_THROUGH and tool_name not in _STDIO_FILTERABLE:
+            log_ai_event(
+                event="ai.tool.blocked",
+                workspace_slug=workspace_slug,
+                user_id=str(user.id) if user else None,
+                mode="mcp",
+                adapter="stdio",
+                tool_name=tool_name,
+                tool_status="blocked",
+                error_code=ERROR_STDIO_RESULT_BLOCKED,
+            )
             return {
                 "success": False,
                 "mode": "mcp",
@@ -375,6 +417,14 @@ def execute_mcp_request(
 
     # --- Unknown adapter ---
     else:
+        log_ai_event(
+            event="ai.tool.blocked",
+            workspace_slug=workspace_slug,
+            user_id=str(user.id) if user else None,
+            mode="mcp",
+            adapter=adapter,
+            error_code=ERROR_UNSUPPORTED_ADAPTER,
+        )
         return {
             "success": False,
             "mode": "mcp",
