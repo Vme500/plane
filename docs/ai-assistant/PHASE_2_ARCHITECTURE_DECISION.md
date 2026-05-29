@@ -410,3 +410,18 @@ ENABLE_AI_MCP_RUNTIME=false        # 是否启用 MCP Runtime
 - ✅ `retrieve_project` 已使用本地 DB（无需修改）
 - ✅ MCP raw result 永远不返回前端
 - ✅ py_compile/typecheck/lint 通过
+
+---
+
+## 18. 第 7 阶段实施记录（2026-05-28）
+
+第 7 阶段实现了 MCP Tool Preview UI，详见 [`PHASE_7_MCP_TOOL_PREVIEW_UI_REPORT.md`](./PHASE_7_MCP_TOOL_PREVIEW_UI_REPORT.md)。
+
+**实际实施范围**：
+
+- ✅ 后端新增 `build_mcp_preview()` 构建结构化预览
+- ✅ endpoint 返回 `mcp_preview` 替代 `mcp_result`
+- ✅ 前端渲染 MCP Tool Preview 区块（工具名、状态、adapter、items、安全提示）
+- ✅ 不展示 raw JSON / secret
+- ✅ standard chat 模式不受影响
+- ✅ py_compile/typecheck/lint 通过

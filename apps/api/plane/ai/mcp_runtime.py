@@ -382,6 +382,154 @@ def execute_mcp_request(
         }
 
 
+def build_mcp_preview(mcp_result: Dict[str, Any]) -> Dict[str, Any]:
+    """
+    Build a structured, safe MCP preview for the frontend.
+
+    Never returns raw MCP result, stack traces, env vars, or secrets.
+    """
+    tool = mcp_result.get("tool", "unknown")
+    success = mcp_result.get("success", False)
+    adapter = mcp_result.get("adapter", "unknown")
+    error = mcp_result.get("error")
+    result = mcp_result.get("result", {})
+
+    # Determine status
+    if not success:
+        status = "blocked" if "not available" in (error or "").lower() else "error"
+    else:
+        status = "success"
+
+    # Build items from result
+    items: list = []
+    summary = ""
+
+    if success and result:
+        if tool == "get_me":
+            name = result.get("display_name", "")
+            email = result.get("email", "")
+            uid = result.get("id") or result.get("user_id", "")
+            items.append({
+                "type": "user",
+                "title": name or uid,
+                "subtitle": email,
+                "metadata": {"id": uid},
+            })
+            summary = name or email or f"User {uid}"
+
+        elif tool == "list_projects":
+            projects = result.get("projects", [])
+            count = result.get("count", len(projects))
+            summary = f"{count} project(s)"
+            for p in projects[:10]:
+                items.append({
+                    "type": "project",
+                    "title": p.get("name", ""),
+                    "subtitle": p.get("identifier", ""),
+                    "metadata": {"id": p.get("id", "")},
+                })
+
+        elif tool == "retrieve_project":
+            items.append({
+                "type": "project",
+                "title": result.get("name", ""),
+                "subtitle": result.get("identifier", ""),
+                "metadata": {"id": result.get("id", "")},
+            })
+            summary = result.get("name", "Project")
+
+        elif tool in ("list_work_items", "search_work_items"):
+            work_items = result.get("work_items", [])
+            count = result.get("count", len(work_items))
+            summary = f"{count} work item(s)"
+            for wi in work_items[:10]:
+                items.append({
+                    "type": "work_item",
+                    "title": wi.get("name", ""),
+                    "subtitle": wi.get("state__name") or wi.get("priority", ""),
+                    "metadata": {"id": wi.get("id", "")},
+                })
+
+        elif tool == "retrieve_work_item":
+            items.append({
+                "type": "work_item",
+                "title": result.get("name", ""),
+                "subtitle": result.get("state") or result.get("priority", ""),
+                "metadata": {"id": result.get("id", "")},
+            })
+            summary = result.get("name", "Work item")
+
+        elif tool == "list_states":
+            states = result.get("states", [])
+            count = result.get("count", len(states))
+            summary = f"{count} state(s)"
+            for s in states[:10]:
+                items.append({
+                    "type": "state",
+                    "title": s.get("name", ""),
+                    "subtitle": s.get("group", ""),
+                    "metadata": {"id": s.get("id", ""), "color": s.get("color", "")},
+                })
+
+        elif tool == "list_labels":
+            labels = result.get("labels", [])
+            count = result.get("count", len(labels))
+            summary = f"{count} label(s)"
+            for l in labels[:10]:
+                items.append({
+                    "type": "label",
+                    "title": l.get("name", ""),
+                    "subtitle": "",
+                    "metadata": {"id": l.get("id", ""), "color": l.get("color", "")},
+                })
+
+        elif tool == "list_cycles":
+            cycles = result.get("cycles", [])
+            count = result.get("count", len(cycles))
+            summary = f"{count} cycle(s)"
+            for c in cycles[:10]:
+                items.append({
+                    "type": "cycle",
+                    "title": c.get("name", ""),
+                    "subtitle": f"{c.get('start_date', '')} - {c.get('end_date', '')}",
+                    "metadata": {"id": c.get("id", "")},
+                })
+
+        elif tool == "list_modules":
+            modules = result.get("modules", [])
+            count = result.get("count", len(modules))
+            summary = f"{count} module(s)"
+            for m in modules[:10]:
+                items.append({
+                    "type": "module",
+                    "title": m.get("name", ""),
+                    "subtitle": m.get("description", "")[:80] if m.get("description") else "",
+                    "metadata": {"id": m.get("id", "")},
+                })
+
+    if not summary and error:
+        summary = error
+    if not summary:
+        summary = "No results"
+
+    return {
+        "mode": "mcp",
+        "adapter": adapter,
+        "tool": {
+            "name": tool,
+            "status": status,
+            "readonly": True,
+        },
+        "summary": summary,
+        "items": items,
+        "safety": {
+            "raw_result_returned": False,
+            "write_operation": False,
+            "permission_filtered": True,
+        },
+    }
+
+
 def format_mcp_response_text(mcp_result: Dict[str, Any]) -> str:
     """
     Format MCP result as human-readable text.

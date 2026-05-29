@@ -159,3 +159,15 @@ Phase 6.9 已正确实现：使用 `_get_accessible_project_or_none()` 从本地
 | 文件                               | 变更                                                                                                                                         |
 | ---------------------------------- | -------------------------------------------------------------------------------------------------------------------------------------------- |
 | `apps/api/plane/ai/mcp_runtime.py` | 新增 `_serialize_user_safe()`；重写 `get_me` 和 `list_projects` 的 `_filter_stdio_result` 逻辑；更新 `format_mcp_response_text` 兼容新旧格式 |
+
+---
+
+## 19. Phase 7 实施记录（2026-05-28）
+
+Phase 7 实现了 MCP Tool Preview UI，详见 [`PHASE_7_MCP_TOOL_PREVIEW_UI_REPORT.md`](./PHASE_7_MCP_TOOL_PREVIEW_UI_REPORT.md)。
+
+**关键变化**：
+
+- `mcp_result` 已从 endpoint 响应中移除
+- 新增 `mcp_preview` 结构化字段
+- 前端渲染 MCP Tool Preview 区块

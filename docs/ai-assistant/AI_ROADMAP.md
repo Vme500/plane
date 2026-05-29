@@ -368,7 +368,37 @@
 
 ---
 
-## Phase 7: Write Operation Confirmation
+## Phase 7: MCP Tool Preview UI ✅
+
+**Goal**: Structured preview of MCP tool-call results in chat UI.
+
+**Changes**:
+
+- Add `build_mcp_preview()` in backend — builds safe structured response
+- Endpoint returns `mcp_preview` instead of `mcp_result`
+- Frontend renders MCP Tool Preview block with tool name, status, items
+- Safety note: "Read-only | Permission filtered"
+- Standard chat mode unaffected
+
+**Acceptance Criteria**:
+
+- [x] MCP response structured as `mcp_preview`
+- [x] Raw `mcp_result` removed from response
+- [x] Frontend renders tool name, status, adapter, items
+- [x] No raw JSON displayed
+- [x] No secrets displayed
+- [x] Standard chat mode unaffected
+- [x] py_compile passes
+- [x] typecheck passes
+- [x] lint passes (0 errors)
+
+**Risks**: Low (display-only, no behavior change)
+
+**Report**: See [PHASE_7_MCP_TOOL_PREVIEW_UI_REPORT.md](./PHASE_7_MCP_TOOL_PREVIEW_UI_REPORT.md)
+
+---
+
+## Phase 8: Write Operation Confirmation
 
 **Goal**: Implement confirmation flow for write operations.
 

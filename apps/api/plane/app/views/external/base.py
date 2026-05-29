@@ -23,7 +23,7 @@ from plane.utils.exception_logger import log_exception
 from ..base import BaseAPIView
 
 # MCP runtime imports
-from plane.ai.mcp_runtime import execute_mcp_request, format_mcp_response_text
+from plane.ai.mcp_runtime import execute_mcp_request, format_mcp_response_text, build_mcp_preview
 
 
 class LLMProvider:
@@ -216,12 +216,15 @@ class WorkspaceGPTIntegrationEndpoint(BaseAPIView):
             response_text = format_mcp_response_text(mcp_result)
             response_html = response_text.replace("\n", "<br/>")
 
+            # Build structured preview for frontend (never includes raw result)
+            mcp_preview = build_mcp_preview(mcp_result)
+
             return Response(
                 {
                     "response": response_text,
                     "response_html": response_html,
                     "mode": "mcp",
-                    "mcp_result": mcp_result,
+                    "mcp_preview": mcp_preview,
                 },
                 status=status.HTTP_200_OK,
             )

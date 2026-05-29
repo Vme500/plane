@@ -20,12 +20,29 @@ const aiService = new AIService();
 
 type ChatMode = "standard" | "mcp";
 
+type MCPPreviewItem = {
+  type: string;
+  title: string;
+  subtitle: string;
+  metadata?: Record<string, unknown>;
+};
+
+type MCPPreview = {
+  mode: string;
+  adapter: string;
+  tool: { name: string; status: string; readonly: boolean };
+  summary: string;
+  items: MCPPreviewItem[];
+  safety?: { raw_result_returned: boolean; write_operation: boolean; permission_filtered: boolean };
+};
+
 type ChatMessage = {
   id: string;
   role: "user" | "assistant";
   content: string;
   createdAt: string;
   mode?: ChatMode;
+  mcpPreview?: MCPPreview;
 };
 
 let messageIdCounter = 0;
@@ -46,32 +63,10 @@ function extractAIResponse(res: unknown): string {
   return "No response content returned.";
 }
 
-function extractMCPToolSummary(res: unknown): string {
-  if (!res || typeof res !== "object") return "";
+function extractMCPPreview(res: unknown): MCPPreview | undefined {
+  if (!res || typeof res !== "object") return undefined;
   const obj = res as Record<string, unknown>;
-  const mcpResult = obj.mcp_result as Record<string, unknown> | undefined;
-  if (!mcpResult) return "";
-
-  const tool = mcpResult.tool as string | undefined;
-  const success = mcpResult.success as boolean;
-  const error = mcpResult.error as string | undefined;
-
-  if (!success && error) {
-    return `[MCP] ${tool || "Unknown tool"}: ${error}`;
-  }
-
-  if (success) {
-    const result = mcpResult.result as Record<string, unknown> | undefined;
-    if (result) {
-      const count = result.count as number | undefined;
-      if (count !== undefined) {
-        return `[MCP] ${tool}: Found ${count} item(s)`;
-      }
-    }
-    return `[MCP] ${tool}: Success`;
-  }
-
-  return "";
+  return obj.mcp_preview as MCPPreview | undefined;
 }
 
 function PiChatPage() {
@@ -115,17 +110,17 @@ function PiChatPage() {
 
       const res = await aiService.createGptTask(workspaceSlug.toString(), payload);
 
-      // Extract response - MCP responses may have additional tool summary
+      // Extract response
       const responseContent = extractAIResponse(res);
-      const mcpSummary = currentMode === "mcp" ? extractMCPToolSummary(res) : "";
-      const fullContent = mcpSummary ? `${mcpSummary}\n\n${responseContent}` : responseContent;
+      const mcpPreview = currentMode === "mcp" ? extractMCPPreview(res) : undefined;
 
       const assistantMessage: ChatMessage = {
         id: generateId(),
         role: "assistant",
-        content: fullContent,
+        content: responseContent,
         createdAt: new Date().toISOString(),
         mode: currentMode,
+        mcpPreview,
       };
       setMessages((prev) => [...prev, assistantMessage]);
     } catch (err: unknown) {
@@ -205,6 +200,42 @@ function PiChatPage() {
                         : "bg-custom-background-80 text-custom-text-200"
                     }`}
                   >
+                    {/* MCP Tool Preview */}
+                    {msg.mcpPreview && (
+                      <div className="border-custom-border-200 bg-custom-background-100 text-xs mb-2 rounded border p-2">
+                        <div className="mb-1 flex items-center gap-2">
+                          <span className="font-medium">[MCP]</span>
+                          <span>{msg.mcpPreview.tool.name}</span>
+                          <span
+                            className={`rounded px-1 text-[10px] ${
+                              msg.mcpPreview.tool.status === "success"
+                                ? "bg-green-100 text-green-700"
+                                : msg.mcpPreview.tool.status === "blocked"
+                                  ? "bg-yellow-100 text-yellow-700"
+                                  : "bg-red-100 text-red-700"
+                            }`}
+                          >
+                            {msg.mcpPreview.tool.status}
+                          </span>
+                          <span className="text-custom-text-400">{msg.mcpPreview.adapter}</span>
+                        </div>
+                        <div className="text-custom-text-200">{msg.mcpPreview.summary}</div>
+                        {msg.mcpPreview.items.length > 0 && (
+                          <ul className="mt-1 list-none space-y-0.5">
+                            {msg.mcpPreview.items.slice(0, 8).map((item) => (
+                              <li key={String(item.metadata?.id ?? item.title)} className="text-custom-text-200">
+                                {item.title}
+                                {item.subtitle && <span className="text-custom-text-400"> — {item.subtitle}</span>}
+                              </li>
+                            ))}
+                            {msg.mcpPreview.items.length > 8 && (
+                              <li className="text-custom-text-400">... and {msg.mcpPreview.items.length - 8} more</li>
+                            )}
+                          </ul>
+                        )}
+                        <div className="text-custom-text-400 mt-1 text-[10px]">Read-only | Permission filtered</div>
+                      </div>
+                    )}
                     {msg.content}
                   </div>
                 </div>
