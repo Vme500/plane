@@ -524,3 +524,18 @@ ENABLE_AI_MCP_RUNTIME=false        # 是否启用 MCP Runtime
 - ✅ 19 个安全字段，3 个核心索引
 - ✅ py_compile 通过
 - ⏳ 未运行 migrate（当前环境无 Django）
+
+---
+
+## 25. 第 8.4.5 阶段验证记录（2026-05-28）
+
+第 8.4.5 阶段验证了 AIAuditEvent model/migration/persistence 安全性，详见 [`PHASE_8_4_5_AUDIT_EVENT_VALIDATION_REPORT.md`](./PHASE_8_4_5_AUDIT_EVENT_VALIDATION_REPORT.md)。
+
+**验证结果**：
+
+- ✅ model 继承正确，字段安全
+- ✅ migration 只包含 AIAuditEvent
+- ✅ helper fail-safe，不记录 raw prompt/result/secret
+- ✅ grep 敏感字段检查通过
+- ✅ API contract 未改变
+- ✅ 无需代码修复

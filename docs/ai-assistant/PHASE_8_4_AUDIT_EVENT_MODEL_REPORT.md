@@ -174,3 +174,17 @@
 - admin-only read API endpoint
 - Workspace Settings → AI Audit Logs 页面
 - 90 天 retention 清理管理命令
+
+---
+
+## 19. Phase 8.4.5 验证记录（2026-05-28）
+
+Phase 8.4.5 验证了 model/migration/persistence 安全性，详见 [`PHASE_8_4_5_AUDIT_EVENT_VALIDATION_REPORT.md`](./PHASE_8_4_5_AUDIT_EVENT_VALIDATION_REPORT.md)。
+
+**验证结果**：
+
+- ✅ model 字段安全，无 raw prompt/result/secret
+- ✅ migration 正确
+- ✅ helper fail-safe
+- ✅ grep 检查通过
+- ✅ 无需代码修复
