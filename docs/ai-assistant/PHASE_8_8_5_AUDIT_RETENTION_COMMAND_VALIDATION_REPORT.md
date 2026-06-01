@@ -239,3 +239,16 @@
 ## 27. 是否可以进入 audit UI 设计
 
 **是。** retention command 安全验证通过。
+
+---
+
+## 28. Phase 9.0 设计记录（2026-05-28）
+
+Phase 9.0 设计了写操作确认机制，详见 [`PHASE_9_0_WRITE_CONFIRMATION_DESIGN.md`](./PHASE_9_0_WRITE_CONFIRMATION_DESIGN.md)。
+
+**设计结论**：
+
+- 二阶段确认：plan → confirm
+- Phase 9.1 最小写操作：update work item state
+- stdio adapter 不适合写操作
+- 不需要新增 migration

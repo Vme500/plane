@@ -693,25 +693,38 @@
 
 ---
 
-## Phase 9: Write Operation Confirmation
+## Phase 9.0: Write Confirmation Design ✅
 
-**Goal**: Implement confirmation flow for write operations.
+**Goal**: Design write operation confirmation workflow.
 
-**Changes**:
+**Design**:
 
-- Add write tools (create, update work items)
-- Confirmation dialog before execution
-- Parameter review UI
-- Execution feedback
+- Write operations risk-classified (low/medium/high)
+- Two-stage confirmation: plan → confirm
+- Phase 9.1 minimum: update work item state only
+- stdio adapter cannot execute writes (workspace API key)
+- Writes must use request.user + Plane internal permissions
+- Prompt injection protection: backend re-validates everything
+- No migration needed for Phase 9.1
 
-**Acceptance Criteria**:
+**Report**: See [PHASE_9_0_WRITE_CONFIRMATION_DESIGN.md](./PHASE_9_0_WRITE_CONFIRMATION_DESIGN.md)
 
-- [ ] Write tools available (behind flag)
-- [ ] Confirmation dialog appears before write
-- [ ] User can review and approve/reject
-- [ ] All write operations logged
+---
 
-**Risks**: Medium (data modification safety)
+## Phase 9.1: Update Work Item State (Planned)
+
+**Goal**: Implement single write operation with confirmation.
+
+**Planned Changes**:
+
+- proposed_action schema
+- Backend confirmation flow (two-stage)
+- pi-chat confirmation card
+- Audit events (ai.write.\*)
+- Only update work item state
+- No bulk, no delete/archive
+
+**Risks**: Medium (first write operation)
 
 **Future PR**: Yes (write operations)
 

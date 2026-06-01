@@ -650,3 +650,19 @@ ENABLE_AI_MCP_RUNTIME=false        # 是否启用 MCP Runtime
 - ✅ 参数边界安全（min 7 days, batch 1-10000）
 - ✅ 无敏感数据输出
 - ✅ 无需代码修复
+
+---
+
+## 33. 第 9.0 阶段设计记录（2026-05-28）
+
+第 9.0 阶段设计了写操作确认机制，详见 [`PHASE_9_0_WRITE_CONFIRMATION_DESIGN.md`](./PHASE_9_0_WRITE_CONFIRMATION_DESIGN.md)。
+
+**设计结论**：
+
+- ✅ 写操作风险分级（低/中/高）
+- ✅ 二阶段确认流程：plan → confirm
+- ✅ Phase 9.1 最小写操作：update work item state
+- ✅ stdio adapter 不适合写操作（workspace API key）
+- ✅ 写操作必须使用 request.user + Plane 内部权限
+- ✅ Prompt injection 防护：后端重新校验所有参数
+- ✅ 不需要新增 migration
