@@ -603,3 +603,18 @@ ENABLE_AI_MCP_RUNTIME=false        # 是否启用 MCP Runtime
 - ✅ pagination 无绕过
 - ✅ grep 敏感字段检查通过
 - 🔧 修复：ActorLiteSerializer source bug（actor_id → actor）
+
+---
+
+## 30. 第 8.7 阶段设计记录（2026-05-28）
+
+第 8.7 阶段设计了 AI audit retention management command，详见 [`PHASE_8_7_AUDIT_RETENTION_COMMAND_DESIGN.md`](./PHASE_8_7_AUDIT_RETENTION_COMMAND_DESIGN.md)。
+
+**设计结论**：
+
+- ✅ 命令名：`cleanup_ai_audit_events`
+- ✅ 默认保留 90 天，最小 7 天
+- ✅ 默认 dry-run，需 `--confirm` 执行
+- ✅ hard delete（真正删除数据）
+- ✅ batch 删除（1000/batch）
+- ✅ 安全输出（只输出数量）

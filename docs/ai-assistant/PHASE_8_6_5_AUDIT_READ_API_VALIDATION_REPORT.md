@@ -203,3 +203,15 @@
 ## 22. 是否可以进入下一阶段
 
 **是。** 修复了 serializer source bug，权限/安全验证通过。
+
+---
+
+## 23. Phase 8.7 设计记录（2026-05-28）
+
+Phase 8.7 设计了 AI audit retention management command，详见 [`PHASE_8_7_AUDIT_RETENTION_COMMAND_DESIGN.md`](./PHASE_8_7_AUDIT_RETENTION_COMMAND_DESIGN.md)。
+
+**设计结论**：
+
+- 命令名：`cleanup_ai_audit_events`
+- 默认 90 天保留，最小 7 天
+- hard delete + batch 删除 + dry-run 默认

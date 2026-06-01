@@ -627,6 +627,25 @@
 
 ---
 
+## Phase 8.7: Audit Retention Command Design ✅
+
+**Goal**: Design AI audit retention management command.
+
+**Design**:
+
+- Command: `cleanup_ai_audit_events`
+- Default retention: 90 days
+- Default: dry-run (no deletion)
+- Requires `--confirm` to execute
+- Hard delete for true data removal
+- Batch deletion (1000/batch)
+- 7-day minimum retention protection
+- Safe output (counts only, no sensitive data)
+
+**Report**: See [PHASE_8_7_AUDIT_RETENTION_COMMAND_DESIGN.md](./PHASE_8_7_AUDIT_RETENTION_COMMAND_DESIGN.md)
+
+---
+
 ## Phase 9: Write Operation Confirmation
 
 **Goal**: Implement confirmation flow for write operations.
