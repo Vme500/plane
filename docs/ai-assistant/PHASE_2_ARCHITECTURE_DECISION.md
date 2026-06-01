@@ -867,3 +867,18 @@ ENABLE_AI_MCP_RUNTIME=false        # 是否启用 MCP Runtime
 - ✅ AI flags: ENABLE_AI_ASSISTANT=True, ENABLE_AI_MCP_RUNTIME=True
 - ✅ API 健康（18180）
 - ✅ Web 健康（18181）
+
+---
+
+## 47. 第 9.3.7F 阶段记录（2026-05-28）
+
+第 9.3.7F 阶段创建了 isolated dev test data，详见 [`PHASE_9_3_7F_ISOLATED_TEST_DATA_REPORT.md`](./PHASE_9_3_7F_ISOLATED_TEST_DATA_REPORT.md)。
+
+**结果**：
+
+- ✅ 测试 workspace `ai-test` 创建
+- ✅ 测试 project `AITEST` 创建
+- ✅ 测试 issue 创建
+- ✅ 两个 state（Todo / In Progress）创建
+- ✅ 测试用户 ADMIN (20)
+- ✅ 数据完整性验证通过

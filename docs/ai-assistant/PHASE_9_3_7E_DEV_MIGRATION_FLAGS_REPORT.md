@@ -137,3 +137,18 @@
 ## 18. 是否可以进入 Phase 9.3.7F
 
 **是。** Dev stack 运行正常，migration 已应用，AI flags 已启用。可创建测试数据。
+
+---
+
+## 19. Phase 9.3.7F 测试数据记录（2026-05-28）
+
+Phase 9.3.7F 创建了测试数据，详见 [`PHASE_9_3_7F_ISOLATED_TEST_DATA_REPORT.md`](./PHASE_9_3_7F_ISOLATED_TEST_DATA_REPORT.md)。
+
+**测试数据**：
+
+- workspace: `ai-test`
+- project: `AITEST`
+- issue: `AI State Update Runtime Test`
+- state A: `Todo`（当前）
+- state B: `In Progress`（目标）
+- user: ADMIN (20)
