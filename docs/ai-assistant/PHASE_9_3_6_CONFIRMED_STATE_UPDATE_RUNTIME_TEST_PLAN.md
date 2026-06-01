@@ -355,3 +355,16 @@ curl -s -X PATCH http://localhost:8000/api/workspaces/<slug>/projects/<project_i
 ## 14. 是否可以进入 Phase 9.3.7
 
 **是。** 测试计划完成，可在 dev 环境中执行手动测试。
+
+---
+
+## 15. Phase 9.3.7 Preflight 记录（2026-05-28）
+
+Phase 9.3.7 完成了 runtime preflight 检查，详见 [`PHASE_9_3_7_CONFIRMED_STATE_UPDATE_RUNTIME_PREFLIGHT_REPORT.md`](./PHASE_9_3_7_CONFIRMED_STATE_UPDATE_RUNTIME_PREFLIGHT_REPORT.md)。
+
+**Preflight 结果**：
+
+- ✅ 开发 fork 路径确认
+- ✅ API 可访问
+- ⚠️ AI 功能未启用（需设置 Docker 环境变量）
+- ❌ 测试数据未选择（环境未就绪）

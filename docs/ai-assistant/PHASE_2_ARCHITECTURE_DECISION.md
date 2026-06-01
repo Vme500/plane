@@ -765,3 +765,19 @@ ENABLE_AI_MCP_RUNTIME=false        # 是否启用 MCP Runtime
 - ✅ 回滚方案
 - ✅ step-by-step runtime 测试命令
 - ✅ 仅限 dev/staging 环境
+
+---
+
+## 40. 第 9.3.7 阶段 Preflight 记录（2026-05-28）
+
+第 9.3.7 阶段完成了 runtime preflight 检查，详见 [`PHASE_9_3_7_CONFIRMED_STATE_UPDATE_RUNTIME_PREFLIGHT_REPORT.md`](./PHASE_9_3_7_CONFIRMED_STATE_UPDATE_RUNTIME_PREFLIGHT_REPORT.md)。
+
+**Preflight 结果**：
+
+- ✅ 开发 fork 路径确认
+- ✅ API 可访问（localhost:18080）
+- ✅ AIAuditEvent migration 文件存在
+- ⚠️ AI 功能未启用（`enable_ai_assistant` / `enable_ai_mcp_runtime` 未设置）
+- ⚠️ LLM 未配置（`has_llm_configured=false`）
+- ❌ 测试数据未选择（环境未就绪）
+- ✅ 未执行 Confirm，未修改数据
