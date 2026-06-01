@@ -610,6 +610,23 @@
 
 ---
 
+## Phase 8.6.5: Audit Read API Validation ✅
+
+**Goal**: Validate audit read API permissions and security.
+
+**Findings**:
+
+- Permission correctly set to ADMIN only
+- Workspace scope enforced
+- Serializer returns only safe fields
+- Filters use whitelists
+- Pagination enforced (no bypass)
+- Found and fixed: ActorLiteSerializer source bug (actor_id → actor)
+
+**Report**: See [PHASE_8_6_5_AUDIT_READ_API_VALIDATION_REPORT.md](./PHASE_8_6_5_AUDIT_READ_API_VALIDATION_REPORT.md)
+
+---
+
 ## Phase 9: Write Operation Confirmation
 
 **Goal**: Implement confirmation flow for write operations.

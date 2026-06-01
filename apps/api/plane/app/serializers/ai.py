@@ -29,7 +29,7 @@ class AIAuditEventSerializer(serializers.ModelSerializer):
     deleted_at, created_by, updated_by, or full model objects.
     """
 
-    actor = ActorLiteSerializer(read_only=True, source="actor_id")
+    actor = ActorLiteSerializer(read_only=True, source="actor")
     workspace_slug = serializers.SlugRelatedField(
         source="workspace", read_only=True, slug_field="slug"
     )

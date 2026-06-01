@@ -587,3 +587,19 @@ ENABLE_AI_MCP_RUNTIME=false        # 是否启用 MCP Runtime
 - ✅ 30 天默认 / 90 天最大时间窗口
 - ✅ py_compile 通过
 - ✅ 不改变 existing API contract
+
+---
+
+## 29. 第 8.6.5 阶段验证记录（2026-05-28）
+
+第 8.6.5 阶段验证了 admin-only AI audit read API 的权限和安全性，详见 [`PHASE_8_6_5_AUDIT_READ_API_VALIDATION_REPORT.md`](./PHASE_8_6_5_AUDIT_READ_API_VALIDATION_REPORT.md)。
+
+**验证结果**：
+
+- ✅ 权限正确（ADMIN only，MEMBER/GUEST = 403）
+- ✅ workspace scope 强制
+- ✅ serializer 只返回安全字段
+- ✅ filters 使用白名单
+- ✅ pagination 无绕过
+- ✅ grep 敏感字段检查通过
+- 🔧 修复：ActorLiteSerializer source bug（actor_id → actor）

@@ -200,3 +200,15 @@ raw prompt, raw result, raw MCP result, token, API key, cookie, password, header
 - admin-only audit log 前端页面（Workspace Settings → AI Audit Logs）
 - retention management command（90 天清理）
 - export 功能（CSV/JSON，ADMIN only）
+
+---
+
+## 21. Phase 8.6.5 验证记录（2026-05-28）
+
+Phase 8.6.5 验证了 read API 权限和安全性，详见 [`PHASE_8_6_5_AUDIT_READ_API_VALIDATION_REPORT.md`](./PHASE_8_6_5_AUDIT_READ_API_VALIDATION_REPORT.md)。
+
+**验证结果**：
+
+- ✅ 权限正确，workspace scope 强制
+- ✅ serializer 安全，filters 使用白名单
+- 🔧 修复：ActorLiteSerializer source bug（`source="actor_id"` → `source="actor"`）
