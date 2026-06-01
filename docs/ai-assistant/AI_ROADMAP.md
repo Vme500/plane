@@ -646,6 +646,35 @@
 
 ---
 
+## Phase 8.8: Audit Retention Command ✅
+
+**Goal**: Implement AI audit retention management command.
+
+**Changes**:
+
+- New `cleanup_ai_audit_events` management command
+- Default: dry-run (no deletion)
+- Requires `--confirm` to execute
+- Default retention: 90 days (min 7)
+- Hard delete in batches (default 1000)
+- Safe output (counts only)
+
+**Acceptance Criteria**:
+
+- [x] Management command created
+- [x] dry-run by default
+- [x] `--confirm` required for deletion
+- [x] `--days` with min 7 protection
+- [x] `--workspace-slug` optional filter
+- [x] `--batch-size` with range validation
+- [x] Hard delete via queryset
+- [x] Safe output (no sensitive data)
+- [x] py_compile passes
+
+**Report**: See [PHASE_8_8_AUDIT_RETENTION_COMMAND_IMPLEMENTATION_REPORT.md](./PHASE_8_8_AUDIT_RETENTION_COMMAND_IMPLEMENTATION_REPORT.md)
+
+---
+
 ## Phase 9: Write Operation Confirmation
 
 **Goal**: Implement confirmation flow for write operations.

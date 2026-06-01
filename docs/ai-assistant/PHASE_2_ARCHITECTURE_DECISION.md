@@ -618,3 +618,19 @@ ENABLE_AI_MCP_RUNTIME=false        # 是否启用 MCP Runtime
 - ✅ hard delete（真正删除数据）
 - ✅ batch 删除（1000/batch）
 - ✅ 安全输出（只输出数量）
+
+---
+
+## 31. 第 8.8 阶段实施记录（2026-05-28）
+
+第 8.8 阶段实现了 AI audit retention management command，详见 [`PHASE_8_8_AUDIT_RETENTION_COMMAND_IMPLEMENTATION_REPORT.md`](./PHASE_8_8_AUDIT_RETENTION_COMMAND_IMPLEMENTATION_REPORT.md)。
+
+**实际实施范围**：
+
+- ✅ 新增 `cleanup_ai_audit_events` management command
+- ✅ 默认 dry-run，需 `--confirm` 执行
+- ✅ 默认 90 天保留，最小 7 天保护
+- ✅ hard delete via `all_objects.filter().delete()`
+- ✅ batch 删除（1000/batch）
+- ✅ 安全输出（只输出数量）
+- ✅ py_compile 通过
