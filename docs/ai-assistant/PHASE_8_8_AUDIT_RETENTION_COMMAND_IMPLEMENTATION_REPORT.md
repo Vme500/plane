@@ -201,3 +201,17 @@ raw prompt, raw result, raw MCP result, token, API key, cookie, password, header
 - 执行 dry-run 验证统计输出
 - 验证 `--days 7` 最小保留期保护
 - 验证 `--batch-size` 范围检查
+
+---
+
+## 26. Phase 8.8.5 验证记录（2026-05-28）
+
+Phase 8.8.5 验证了 retention command 安全性，详见 [`PHASE_8_8_5_AUDIT_RETENTION_COMMAND_VALIDATION_REPORT.md`](./PHASE_8_8_5_AUDIT_RETENTION_COMMAND_VALIDATION_REPORT.md)。
+
+**验证结果**：
+
+- ✅ hard delete 确认
+- ✅ dry-run 保护通过
+- ✅ 参数边界安全
+- ✅ 无敏感数据输出
+- ✅ 无需代码修复

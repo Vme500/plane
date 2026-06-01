@@ -634,3 +634,19 @@ ENABLE_AI_MCP_RUNTIME=false        # 是否启用 MCP Runtime
 - ✅ batch 删除（1000/batch）
 - ✅ 安全输出（只输出数量）
 - ✅ py_compile 通过
+
+---
+
+## 32. 第 8.8.5 阶段验证记录（2026-05-28）
+
+第 8.8.5 阶段验证了 retention command 安全性，详见 [`PHASE_8_8_5_AUDIT_RETENTION_COMMAND_VALIDATION_REPORT.md`](./PHASE_8_8_5_AUDIT_RETENTION_COMMAND_VALIDATION_REPORT.md)。
+
+**验证结果**：
+
+- ✅ command 路径注册正确
+- ✅ hard delete 确认（queryset delete 绕过 soft delete）
+- ✅ dry-run 保护通过
+- ✅ --confirm 删除路径安全
+- ✅ 参数边界安全（min 7 days, batch 1-10000）
+- ✅ 无敏感数据输出
+- ✅ 无需代码修复
