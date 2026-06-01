@@ -699,3 +699,19 @@ ENABLE_AI_MCP_RUNTIME=false        # 是否启用 MCP Runtime
 - ✅ 不调用 stdio/mcp-server write
 - ✅ grep 无真实写入风险
 - ✅ 无需代码修复
+
+---
+
+## 36. 第 9.2 阶段设计记录（2026-05-28）
+
+第 9.2 阶段设计了 confirmed update_work_item_state 实现方案，详见 [`PHASE_9_2_CONFIRMED_STATE_UPDATE_DESIGN.md`](./PHASE_9_2_CONFIRMED_STATE_UPDATE_DESIGN.md)。
+
+**设计结论**：
+
+- ✅ 确认 token：signed payload（Django TimestampSigner），不落库
+- ✅ 目标/状态解析：UUID only
+- ✅ 权限：workspace member + project member (ADMIN/MEMBER)
+- ✅ 执行路径：直接 ORM + activity dispatch
+- ✅ 15 个安全 error codes
+- ✅ 幂等：相同 state 设置结果相同
+- ✅ 不需要新增 migration

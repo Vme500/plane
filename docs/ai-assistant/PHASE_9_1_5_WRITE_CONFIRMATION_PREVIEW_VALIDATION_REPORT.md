@@ -221,3 +221,16 @@
 ## 22. 是否可以进入 Phase 9.2
 
 **是。** 所有安全验证通过，可实现 target 解析 + 真实写操作（走 Plane 内部权限校验）。
+
+---
+
+## 23. Phase 9.2 设计记录（2026-05-28）
+
+Phase 9.2 设计了 confirmed update_work_item_state 实现方案，详见 [`PHASE_9_2_CONFIRMED_STATE_UPDATE_DESIGN.md`](./PHASE_9_2_CONFIRMED_STATE_UPDATE_DESIGN.md)。
+
+**设计结论**：
+
+- signed payload 确认 token（不落库）
+- 直接 ORM 更新 + activity dispatch
+- 权限：workspace member + project member (ADMIN/MEMBER)
+- 不需要新增 migration

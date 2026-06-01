@@ -761,6 +761,24 @@
 
 ---
 
+## Phase 9.2: Confirmed State Update Design ✅
+
+**Goal**: Design confirmed update_work_item_state execution path.
+
+**Design**:
+
+- Signed payload (Django TimestampSigner) for confirmation token
+- No migration needed
+- Target/state parsing via UUID
+- Permission: workspace member + project member (ADMIN/MEMBER)
+- Direct ORM update + activity dispatch
+- 15 safe error codes
+- Idempotent (same state = same result)
+
+**Report**: See [PHASE_9_2_CONFIRMED_STATE_UPDATE_DESIGN.md](./PHASE_9_2_CONFIRMED_STATE_UPDATE_DESIGN.md)
+
+---
+
 ## Phase 8: Audit Logging
 
 **Goal**: Implement comprehensive audit logging for AI operations.
