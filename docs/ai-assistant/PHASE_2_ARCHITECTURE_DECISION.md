@@ -824,3 +824,17 @@ ENABLE_AI_MCP_RUNTIME=false        # 是否启用 MCP Runtime
 - ✅ 修改 `.gitignore`（添加 `.env.ai-dev.local`）
 - ✅ 端口：API 18180, Web 18181
 - ✅ 独立 volume：`plane_ai_dev_pgdata`, `plane_ai_dev_redisdata`
+
+---
+
+## 44. 第 9.3.7D 阶段记录（2026-05-28）
+
+第 9.3.7D 阶段尝试启动 isolated dev stack，详见 [`PHASE_9_3_7D_ISOLATED_DEV_STACK_START_REPORT.md`](./PHASE_9_3_7D_ISOLATED_DEV_STACK_START_REPORT.md)。
+
+**结果**：
+
+- ✅ `.env.ai-dev.local` 创建（gitignored）
+- ✅ `docker compose config` 通过
+- ✅ 修复 API/Worker build context 路径
+- ⚠️ Build 失败：网络超时（Docker Hub、npm、APK 镜像）
+- ❌ 未启动容器（需稳定网络重试）

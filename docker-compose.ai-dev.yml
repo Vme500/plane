@@ -11,8 +11,8 @@ services:
   plane-ai-dev-api:
     container_name: plane-ai-dev-api
     build:
-      context: .
-      dockerfile: ./apps/api/Dockerfile.dev
+      context: ./apps/api
+      dockerfile: Dockerfile.dev
     restart: unless-stopped
     depends_on:
       - plane-ai-dev-db
@@ -27,8 +27,6 @@ services:
       - "18180:8000"
     networks:
       - plane-ai-dev-net
-    volumes:
-      - ./apps/api:/code/plane
 
   plane-ai-dev-web:
     container_name: plane-ai-dev-web
@@ -77,8 +75,8 @@ services:
   plane-ai-dev-worker:
     container_name: plane-ai-dev-worker
     build:
-      context: .
-      dockerfile: ./apps/api/Dockerfile.dev
+      context: ./apps/api
+      dockerfile: Dockerfile.dev
     restart: unless-stopped
     depends_on:
       - plane-ai-dev-db
@@ -92,8 +90,6 @@ services:
     command: celery -A plane worker -l info
     networks:
       - plane-ai-dev-net
-    volumes:
-      - ./apps/api:/code/plane
 
 volumes:
   plane_ai_dev_pgdata:
