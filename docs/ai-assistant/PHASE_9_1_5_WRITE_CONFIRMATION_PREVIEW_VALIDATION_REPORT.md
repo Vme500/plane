@@ -234,3 +234,17 @@ Phase 9.2 设计了 confirmed update_work_item_state 实现方案，详见 [`PHA
 - 直接 ORM 更新 + activity dispatch
 - 权限：workspace member + project member (ADMIN/MEMBER)
 - 不需要新增 migration
+
+---
+
+## 24. Phase 9.3 实施记录（2026-05-28）
+
+Phase 9.3 实现了 confirmed update_work_item_state，详见 [`PHASE_9_3_CONFIRMED_STATE_UPDATE_IMPLEMENTATION_REPORT.md`](./PHASE_9_3_CONFIRMED_STATE_UPDATE_IMPLEMENTATION_REPORT.md)。
+
+**实施结果**：
+
+- ✅ signed confirmation token
+- ✅ 完整权限校验链
+- ✅ 直接 ORM 更新 + activity dispatch
+- ✅ 前端 Confirm 按钮启用
+- ✅ 不调用 stdio/plane-mcp-server write

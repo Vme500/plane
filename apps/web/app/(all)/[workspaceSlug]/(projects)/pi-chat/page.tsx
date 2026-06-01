@@ -42,6 +42,7 @@ type ProposedAction = {
   requires_confirmation: boolean;
   expires_at: string;
   execution_enabled: boolean;
+  confirmation_token?: string | null;
 };
 
 type MCPPreview = {
@@ -278,7 +279,50 @@ function PiChatPage() {
                             </div>
                             <div className="mt-2 flex gap-2">
                               <button
-                                disabled={!msg.mcpPreview.proposed_action.execution_enabled}
+                                disabled={
+                                  !msg.mcpPreview.proposed_action.execution_enabled ||
+                                  !msg.mcpPreview.proposed_action.confirmation_token
+                                }
+                                onClick={() => {
+                                  if (
+                                    msg.mcpPreview?.proposed_action?.execution_enabled &&
+                                    msg.mcpPreview.proposed_action.confirmation_token
+                                  ) {
+                                    const confirmPayload = {
+                                      prompt: "",
+                                      task: "chat",
+                                      mode: "mcp" as const,
+                                      confirm_action_id: msg.mcpPreview.proposed_action.action_id,
+                                      confirmation_token: msg.mcpPreview.proposed_action.confirmation_token,
+                                    };
+                                    void aiService
+                                      .createGptTask(workspaceSlug.toString(), confirmPayload)
+                                      .then((res) => {
+                                        const responseContent = extractAIResponse(res);
+                                        const confirmPreview = extractMCPPreview(res);
+                                        const confirmMsg: ChatMessage = {
+                                          id: generateId(),
+                                          role: "assistant",
+                                          content: responseContent,
+                                          createdAt: new Date().toISOString(),
+                                          mode: "mcp",
+                                          mcpPreview: confirmPreview,
+                                        };
+                                        setMessages((prev) => [...prev, confirmMsg]);
+                                        return undefined;
+                                      })
+                                      .catch(() => {
+                                        const errorMsg: ChatMessage = {
+                                          id: generateId(),
+                                          role: "assistant",
+                                          content: "Failed to confirm action. Please try again.",
+                                          createdAt: new Date().toISOString(),
+                                          mode: "mcp",
+                                        };
+                                        setMessages((prev) => [...prev, errorMsg]);
+                                      });
+                                  }
+                                }}
                                 className="bg-yellow-600 rounded px-2 py-1 text-white disabled:opacity-50"
                               >
                                 {msg.mcpPreview.proposed_action.execution_enabled ? "Confirm" : "Confirm (not enabled)"}

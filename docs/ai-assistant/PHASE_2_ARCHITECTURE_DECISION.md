@@ -715,3 +715,21 @@ ENABLE_AI_MCP_RUNTIME=false        # 是否启用 MCP Runtime
 - ✅ 15 个安全 error codes
 - ✅ 幂等：相同 state 设置结果相同
 - ✅ 不需要新增 migration
+
+---
+
+## 37. 第 9.3 阶段实施记录（2026-05-28）
+
+第 9.3 阶段实现了 confirmed update_work_item_state，详见 [`PHASE_9_3_CONFIRMED_STATE_UPDATE_IMPLEMENTATION_REPORT.md`](./PHASE_9_3_CONFIRMED_STATE_UPDATE_IMPLEMENTATION_REPORT.md)。
+
+**实际实施范围**：
+
+- ✅ signed confirmation token（Django TimestampSigner, max_age=300s）
+- ✅ UUID-based issue/state 解析
+- ✅ 完整权限校验链（workspace + project member）
+- ✅ current_state 一致性检查
+- ✅ 直接 ORM 更新 + activity dispatch
+- ✅ 前端 Confirm 按钮启用
+- ✅ audit events（proposed, confirmed, executed, rejected, error）
+- ✅ 只更新 state 字段
+- ✅ py_compile/typecheck/lint 通过

@@ -779,6 +779,39 @@
 
 ---
 
+## Phase 9.3: Confirmed State Update Implementation ✅
+
+**Goal**: Implement confirmed update_work_item_state with signed token.
+
+**Changes**:
+
+- Signed confirmation token (Django TimestampSigner, max_age=300s)
+- UUID-based issue/state parsing
+- Full permission validation chain
+- Direct ORM update + activity dispatch
+- Frontend Confirm button enabled when execution_enabled=True
+- Audit events (proposed, confirmed, executed, rejected, error)
+- Only updates state field
+
+**Acceptance Criteria**:
+
+- [x] Signed token generated
+- [x] execution_enabled=True when validation passes
+- [x] Full permission chain (workspace + project member)
+- [x] current_state consistency check
+- [x] Only state field updated
+- [x] Activity dispatch
+- [x] Frontend Confirm button works
+- [x] Audit events logged
+- [x] py_compile passes
+- [x] typecheck/lint passes
+
+**Risks**: Medium (first real write operation)
+
+**Report**: See [PHASE_9_3_CONFIRMED_STATE_UPDATE_IMPLEMENTATION_REPORT.md](./PHASE_9_3_CONFIRMED_STATE_UPDATE_IMPLEMENTATION_REPORT.md)
+
+---
+
 ## Phase 8: Audit Logging
 
 **Goal**: Implement comprehensive audit logging for AI operations.

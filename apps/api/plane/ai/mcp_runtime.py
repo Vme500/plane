@@ -114,9 +114,18 @@ def parse_mcp_intent(prompt: str) -> Dict[str, Any]:
     if any(word in prompt_lower for word in ["search", "find"]):
         return {"tool_name": "search_work_items", "params": {"query": prompt}}
 
-    # Write intent detection (Phase 9.1 - plan only, no execution)
+    # Write intent detection (Phase 9.3 - with UUID extraction)
     if any(word in prompt_lower for word in ["change state", "update status", "mark as", "set state", "move to"]):
-        return {"tool_name": "update_work_item_state", "params": {"prompt": prompt}}
+        # Extract UUIDs from prompt
+        import re
+        uuid_pattern = r"[0-9a-f]{8}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{12}"
+        uuids = re.findall(uuid_pattern, prompt_lower)
+        params = {"prompt": prompt}
+        if len(uuids) >= 1:
+            params["issue_id"] = uuids[0]
+        if len(uuids) >= 2:
+            params["proposed_state_id"] = uuids[1]
+        return {"tool_name": "update_work_item_state", "params": params}
 
     # Default: not recognized as an MCP tool request
     return {"tool_name": None, "params": {}}
@@ -238,30 +247,39 @@ def _generate_proposed_action(
     tool_name: str,
     workspace_slug: str,
     user,
-    prompt: str,
+    params: Optional[Dict] = None,
 ) -> Optional[Dict[str, Any]]:
     """
-    Generate a proposed_action for write operations (Phase 9.1 - plan only).
+    Generate a proposed_action for write operations (Phase 9.3).
 
-    Returns proposed_action dict with execution_enabled=False.
+    Validates issue/state exist, belong to workspace/project, and user has permission.
+    Returns proposed_action with execution_enabled=True if all checks pass.
+    Returns proposed_action with execution_enabled=False if validation fails.
     Never executes real write operations.
     """
     import uuid
+    import json
     from datetime import timedelta
+    from django.core.signing import TimestampSigner
     from django.utils import timezone
+    from plane.db.models import Issue, State, ProjectMember, WorkspaceMember
 
     if tool_name != "update_work_item_state":
         return None
 
+    params = params or {}
     actor_id = str(user.id) if user else None
+    issue_id = params.get("issue_id")
+    proposed_state_id = params.get("proposed_state_id")
 
-    proposed_action = {
+    # Base proposed_action (plan-only fallback)
+    base_action = {
         "action_id": str(uuid.uuid4()),
         "workspace_slug": workspace_slug,
         "actor_id": actor_id,
         "action_type": "update_work_item_state",
         "target_type": "work_item",
-        "target_id": None,
+        "target_id": issue_id,
         "target_display": None,
         "current_value": None,
         "proposed_value": None,
@@ -270,6 +288,88 @@ def _generate_proposed_action(
         "requires_confirmation": True,
         "expires_at": (timezone.now() + timedelta(minutes=5)).isoformat(),
         "execution_enabled": False,
+        "confirmation_token": None,
+    }
+
+    # If no issue_id or state_id provided, return plan-only
+    if not issue_id or not proposed_state_id:
+        create_ai_audit_event(
+            event="ai.write.proposed",
+            workspace_slug=workspace_slug,
+            actor_id=actor_id,
+            mode="mcp",
+            tool_name=tool_name,
+            tool_status="proposed",
+            readonly=False,
+            write_operation=True,
+        )
+        return base_action
+
+    # Validate UUIDs
+    try:
+        uuid.UUID(issue_id)
+        uuid.UUID(proposed_state_id)
+    except (ValueError, TypeError):
+        return base_action
+
+    # Validate workspace membership
+    if not WorkspaceMember.objects.filter(
+        workspace__slug=workspace_slug, member=user, is_active=True
+    ).exists():
+        return base_action
+
+    # Validate issue exists and belongs to workspace
+    try:
+        issue = Issue.objects.get(pk=issue_id, workspace__slug=workspace_slug)
+    except (Issue.DoesNotExist, ValueError):
+        return base_action
+
+    # Validate project membership (ADMIN or MEMBER)
+    if not ProjectMember.objects.filter(
+        project_id=issue.project_id,
+        member=user,
+        role__in=[20, 15],  # ADMIN, MEMBER
+        is_active=True,
+    ).exists():
+        return base_action
+
+    # Validate proposed state belongs to same project
+    try:
+        proposed_state = State.objects.get(pk=proposed_state_id, project_id=issue.project_id)
+    except (State.DoesNotExist, ValueError):
+        return base_action
+
+    # Get current state name
+    current_state = None
+    if issue.state_id:
+        try:
+            current_state = State.objects.get(pk=issue.state_id)
+        except State.DoesNotExist:
+            pass
+
+    # Generate signed confirmation token
+    signer = TimestampSigner()
+    token_payload = json.dumps({
+        "action_id": base_action["action_id"],
+        "workspace_slug": workspace_slug,
+        "actor_id": actor_id,
+        "issue_id": issue_id,
+        "project_id": str(issue.project_id),
+        "current_state_id": str(issue.state_id) if issue.state_id else None,
+        "proposed_state_id": proposed_state_id,
+        "action_type": "update_work_item_state",
+    })
+    confirmation_token = signer.sign(token_payload)
+
+    # All validations passed - build enabled proposed_action
+    proposed_action = {
+        **base_action,
+        "target_display": issue.name[:100] if issue.name else str(issue_id),
+        "current_value": current_state.name if current_state else None,
+        "proposed_value": proposed_state.name,
+        "summary": f"Update state: {current_state.name if current_state else '?'} → {proposed_state.name}",
+        "execution_enabled": True,
+        "confirmation_token": confirmation_token,
     }
 
     # Log audit event
@@ -342,12 +442,12 @@ def execute_mcp_request(
 
     # Validate tool is allowed
     if not is_tool_allowed(tool_name):
-        # Phase 9.1: Check if this is a write operation that can generate proposed_action
+        # Phase 9.3: Check if this is a write operation that can generate proposed_action
         proposed_action = _generate_proposed_action(
             tool_name=tool_name,
             workspace_slug=workspace_slug,
             user=user,
-            prompt=prompt,
+            params=intent.get("params"),
         )
         if proposed_action:
             return {
