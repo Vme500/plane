@@ -733,3 +733,20 @@ ENABLE_AI_MCP_RUNTIME=false        # 是否启用 MCP Runtime
 - ✅ audit events（proposed, confirmed, executed, rejected, error）
 - ✅ 只更新 state 字段
 - ✅ py_compile/typecheck/lint 通过
+
+---
+
+## 38. 第 9.3.5 阶段验证记录（2026-05-28）
+
+第 9.3.5 阶段验证了 confirmed state update 安全性，详见 [`PHASE_9_3_5_CONFIRMED_STATE_UPDATE_VALIDATION_REPORT.md`](./PHASE_9_3_5_CONFIRMED_STATE_UPDATE_VALIDATION_REPORT.md)。
+
+**验证结果**：
+
+- ✅ 写入路径安全（`issue.save()` 触发 model-level side effects）
+- ✅ 完整权限链（14 项检查）
+- ✅ signed token 安全（TimestampSigner, max_age=300）
+- ✅ confirm_action_id 校验
+- ✅ 只更新 state
+- ✅ 不调用 stdio/plane-mcp-server write
+- ✅ audit events 安全
+- ✅ 无需代码修复

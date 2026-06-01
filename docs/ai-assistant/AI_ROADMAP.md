@@ -812,6 +812,26 @@
 
 ---
 
+## Phase 9.3.5: Confirmed State Update Validation ✅
+
+**Goal**: Validate confirmed state update security and correctness.
+
+**Findings**:
+
+- Write path: `issue.save()` triggers `_sync_completed_at()` and `ChangeTrackerMixin`
+- Activity dispatch manually invoked (equivalent to existing endpoint)
+- Full permission chain verified (14 checks)
+- Signed token properly verified (TimestampSigner, max_age=300)
+- confirm_action_id verified against token action_id
+- Only state field updated
+- No stdio/mcp-server write calls
+- Audit events properly logged
+- No code fixes needed
+
+**Report**: See [PHASE_9_3_5_CONFIRMED_STATE_UPDATE_VALIDATION_REPORT.md](./PHASE_9_3_5_CONFIRMED_STATE_UPDATE_VALIDATION_REPORT.md)
+
+---
+
 ## Phase 8: Audit Logging
 
 **Goal**: Implement comprehensive audit logging for AI operations.
