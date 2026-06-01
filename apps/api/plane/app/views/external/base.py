@@ -206,6 +206,38 @@ class WorkspaceGPTIntegrationEndpoint(BaseAPIView):
         mode = request.data.get("mode", "standard")
 
         if mode == "mcp":
+            # Phase 9.1: Reject any confirm_action_id (execution not enabled)
+            confirm_action_id = request.data.get("confirm_action_id")
+            if confirm_action_id:
+                create_ai_audit_event(
+                    event="ai.write.rejected",
+                    workspace_slug=slug,
+                    actor_id=user_id,
+                    mode="mcp",
+                    tool_name="update_work_item_state",
+                    tool_status="rejected",
+                    readonly=False,
+                    write_operation=True,
+                    error_code="execution_not_enabled",
+                )
+                return Response(
+                    {
+                        "response": "Write operation execution is not enabled yet. This is a plan-only preview.",
+                        "response_html": "Write operation execution is not enabled yet. This is a plan-only preview.",
+                        "mode": "mcp",
+                        "mcp_preview": {
+                            "mode": "mcp",
+                            "adapter": "none",
+                            "tool": {"name": "update_work_item_state", "status": "rejected", "readonly": False},
+                            "summary": "Execution not enabled",
+                            "items": [],
+                            "safety": {"raw_result_returned": False, "write_operation": True, "permission_filtered": True},
+                            "proposed_action": None,
+                        },
+                    },
+                    status=status.HTTP_200_OK,
+                )
+
             # MCP mode - execute read-only MCP tools
             prompt = request.data.get("prompt", "")
 

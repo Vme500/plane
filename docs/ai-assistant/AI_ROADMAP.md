@@ -711,22 +711,34 @@
 
 ---
 
-## Phase 9.1: Update Work Item State (Planned)
+## Phase 9.1: Write Confirmation Plan-Only ✅
 
-**Goal**: Implement single write operation with confirmation.
+**Goal**: Implement plan-only write confirmation (no real execution).
 
-**Planned Changes**:
+**Changes**:
 
-- proposed_action schema
-- Backend confirmation flow (two-stage)
+- Write intent detection
+- proposed_action with execution_enabled=False
+- confirm_action_id interception (reject)
 - pi-chat confirmation card
-- Audit events (ai.write.\*)
-- Only update work item state
-- No bulk, no delete/archive
+- Audit events (ai.write.proposed, ai.write.rejected)
+- No real write operations
 
-**Risks**: Medium (first write operation)
+**Acceptance Criteria**:
 
-**Future PR**: Yes (write operations)
+- [x] Write intent detected
+- [x] proposed_action generated (plan only)
+- [x] execution_enabled=False
+- [x] confirm_action_id rejected
+- [x] Confirmation card displayed
+- [x] Audit events logged
+- [x] No real write operations
+- [x] py_compile passes
+- [x] typecheck/lint passes
+
+**Risks**: Low (plan only, no execution)
+
+**Report**: See [PHASE_9_1_WRITE_CONFIRMATION_PLAN_ONLY_REPORT.md](./PHASE_9_1_WRITE_CONFIRMATION_PLAN_ONLY_REPORT.md)
 
 ---
 

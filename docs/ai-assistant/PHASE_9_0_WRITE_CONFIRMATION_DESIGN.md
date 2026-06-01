@@ -179,7 +179,7 @@ raw prompt, raw result, raw MCP result, token, API key, cookie, password, header
 | 校验 issue 属于 workspace/project | ✅ `Issue.issue_objects.filter(...)` |
 | GUEST 禁止写                      | ✅ `ROLE.MEMBER` 最低                |
 | 阻止跨 workspace target           | ✅ queryset filter                   |
-| stdio adapter 不直接执行写        | ✅ 写操作走 mock adapter 路径        |
+| stdio adapter 不直接执行写        | ✅ 写操作走 Plane 内部权限校验路径   |
 
 ### 关键：stdio adapter 不适合写操作
 
@@ -350,3 +350,17 @@ raw prompt, raw MCP result, secret, headers, stack trace。
 ## 18. 是否可以进入 Phase 9.1
 
 **是。** 设计完成，可实现 update work item state + confirmation flow。
+
+---
+
+## 19. Phase 9.1 实施记录（2026-05-28）
+
+Phase 9.1 已按本文档设计实施 plan-only confirmation，详见 [`PHASE_9_1_WRITE_CONFIRMATION_PLAN_ONLY_REPORT.md`](./PHASE_9_1_WRITE_CONFIRMATION_PLAN_ONLY_REPORT.md)。
+
+**实施结果**：
+
+- ✅ 写意图检测
+- ✅ proposed_action 生成（execution_enabled=False）
+- ✅ confirm_action_id 拦截
+- ✅ pi-chat confirmation card
+- ✅ 不执行真实写操作

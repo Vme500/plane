@@ -666,3 +666,19 @@ ENABLE_AI_MCP_RUNTIME=false        # 是否启用 MCP Runtime
 - ✅ 写操作必须使用 request.user + Plane 内部权限
 - ✅ Prompt injection 防护：后端重新校验所有参数
 - ✅ 不需要新增 migration
+
+---
+
+## 34. 第 9.1 阶段实施记录（2026-05-28）
+
+第 9.1 阶段实现了 plan-only write confirmation，详见 [`PHASE_9_1_WRITE_CONFIRMATION_PLAN_ONLY_REPORT.md`](./PHASE_9_1_WRITE_CONFIRMATION_PLAN_ONLY_REPORT.md)。
+
+**实际实施范围**：
+
+- ✅ 写意图检测（change state, update status, mark as）
+- ✅ proposed_action 生成（execution_enabled=False）
+- ✅ confirm_action_id 拦截（始终拒绝）
+- ✅ pi-chat confirmation card
+- ✅ audit events（ai.write.proposed, ai.write.rejected）
+- ✅ 不执行任何真实写操作
+- ✅ py_compile/typecheck/lint 通过

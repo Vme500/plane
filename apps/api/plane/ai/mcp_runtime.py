@@ -114,6 +114,10 @@ def parse_mcp_intent(prompt: str) -> Dict[str, Any]:
     if any(word in prompt_lower for word in ["search", "find"]):
         return {"tool_name": "search_work_items", "params": {"query": prompt}}
 
+    # Write intent detection (Phase 9.1 - plan only, no execution)
+    if any(word in prompt_lower for word in ["change state", "update status", "mark as", "set state", "move to"]):
+        return {"tool_name": "update_work_item_state", "params": {"prompt": prompt}}
+
     # Default: not recognized as an MCP tool request
     return {"tool_name": None, "params": {}}
 
@@ -230,6 +234,59 @@ def _uuid_eq(value, id_set) -> bool:
         return False
 
 
+def _generate_proposed_action(
+    tool_name: str,
+    workspace_slug: str,
+    user,
+    prompt: str,
+) -> Optional[Dict[str, Any]]:
+    """
+    Generate a proposed_action for write operations (Phase 9.1 - plan only).
+
+    Returns proposed_action dict with execution_enabled=False.
+    Never executes real write operations.
+    """
+    import uuid
+    from datetime import timedelta
+    from django.utils import timezone
+
+    if tool_name != "update_work_item_state":
+        return None
+
+    actor_id = str(user.id) if user else None
+
+    proposed_action = {
+        "action_id": str(uuid.uuid4()),
+        "workspace_slug": workspace_slug,
+        "actor_id": actor_id,
+        "action_type": "update_work_item_state",
+        "target_type": "work_item",
+        "target_id": None,
+        "target_display": None,
+        "current_value": None,
+        "proposed_value": None,
+        "risk_level": "medium",
+        "summary": "Update work item state",
+        "requires_confirmation": True,
+        "expires_at": (timezone.now() + timedelta(minutes=5)).isoformat(),
+        "execution_enabled": False,
+    }
+
+    # Log audit event
+    create_ai_audit_event(
+        event="ai.write.proposed",
+        workspace_slug=workspace_slug,
+        actor_id=actor_id,
+        mode="mcp",
+        tool_name=tool_name,
+        tool_status="proposed",
+        readonly=False,
+        write_operation=True,
+    )
+
+    return proposed_action
+
+
 def execute_mcp_request(
     prompt: str,
     workspace_slug: str,
@@ -285,6 +342,24 @@ def execute_mcp_request(
 
     # Validate tool is allowed
     if not is_tool_allowed(tool_name):
+        # Phase 9.1: Check if this is a write operation that can generate proposed_action
+        proposed_action = _generate_proposed_action(
+            tool_name=tool_name,
+            workspace_slug=workspace_slug,
+            user=user,
+            prompt=prompt,
+        )
+        if proposed_action:
+            return {
+                "success": True,
+                "mode": "mcp",
+                "adapter": _get_adapter_type(),
+                "tool": tool_name,
+                "tool_description": "Write operation proposed (plan only)",
+                "result": {},
+                "proposed_action": proposed_action,
+            }
+
         create_ai_audit_event(
             event="ai.tool.rejected",
             workspace_slug=workspace_slug,
@@ -562,21 +637,26 @@ def build_mcp_preview(mcp_result: Dict[str, Any]) -> Dict[str, Any]:
     if not summary:
         summary = "No results"
 
+    # Check for proposed_action (Phase 9.1 - write confirmation)
+    proposed_action = mcp_result.get("proposed_action")
+    is_write = proposed_action is not None
+
     return {
         "mode": "mcp",
         "adapter": adapter,
         "tool": {
             "name": tool,
-            "status": status,
-            "readonly": True,
+            "status": "proposed" if is_write else status,
+            "readonly": not is_write,
         },
-        "summary": summary,
+        "summary": proposed_action.get("summary", summary) if is_write else summary,
         "items": items,
         "safety": {
             "raw_result_returned": False,
-            "write_operation": False,
+            "write_operation": is_write,
             "permission_filtered": True,
         },
+        "proposed_action": proposed_action,
     }
 
 

@@ -27,6 +27,23 @@ type MCPPreviewItem = {
   metadata?: Record<string, unknown>;
 };
 
+type ProposedAction = {
+  action_id: string;
+  workspace_slug: string;
+  actor_id: string;
+  action_type: string;
+  target_type: string;
+  target_id: string | null;
+  target_display: string | null;
+  current_value: string | null;
+  proposed_value: string | null;
+  risk_level: string;
+  summary: string;
+  requires_confirmation: boolean;
+  expires_at: string;
+  execution_enabled: boolean;
+};
+
 type MCPPreview = {
   mode: string;
   adapter: string;
@@ -34,6 +51,7 @@ type MCPPreview = {
   summary: string;
   items: MCPPreviewItem[];
   safety?: { raw_result_returned: boolean; write_operation: boolean; permission_filtered: boolean };
+  proposed_action?: ProposedAction | null;
 };
 
 type ChatMessage = {
@@ -233,7 +251,42 @@ function PiChatPage() {
                             )}
                           </ul>
                         )}
-                        <div className="text-custom-text-400 mt-1 text-[10px]">Read-only | Permission filtered</div>
+                        <div className="text-custom-text-400 mt-1 text-[10px]">
+                          {msg.mcpPreview.safety?.write_operation
+                            ? "Write proposed | Plan only"
+                            : "Read-only | Permission filtered"}
+                        </div>
+                        {/* Phase 9.1: Confirmation card for write operations */}
+                        {msg.mcpPreview.proposed_action && (
+                          <div className="border-yellow-300 bg-yellow-50 text-xs mt-2 rounded border p-2">
+                            <div className="text-yellow-800 font-medium">Write Operation Proposed</div>
+                            <div className="text-yellow-700 mt-1">
+                              <div>Action: {msg.mcpPreview.proposed_action.action_type}</div>
+                              {msg.mcpPreview.proposed_action.target_display && (
+                                <div>Target: {msg.mcpPreview.proposed_action.target_display}</div>
+                              )}
+                              {msg.mcpPreview.proposed_action.current_value && (
+                                <div>Current: {msg.mcpPreview.proposed_action.current_value}</div>
+                              )}
+                              {msg.mcpPreview.proposed_action.proposed_value && (
+                                <div>Proposed: {msg.mcpPreview.proposed_action.proposed_value}</div>
+                              )}
+                              <div>Risk: {msg.mcpPreview.proposed_action.risk_level}</div>
+                              <div>
+                                Expires: {new Date(msg.mcpPreview.proposed_action.expires_at).toLocaleTimeString()}
+                              </div>
+                            </div>
+                            <div className="mt-2 flex gap-2">
+                              <button
+                                disabled={!msg.mcpPreview.proposed_action.execution_enabled}
+                                className="bg-yellow-600 rounded px-2 py-1 text-white disabled:opacity-50"
+                              >
+                                {msg.mcpPreview.proposed_action.execution_enabled ? "Confirm" : "Confirm (not enabled)"}
+                              </button>
+                              <button className="bg-gray-300 text-gray-700 rounded px-2 py-1">Cancel</button>
+                            </div>
+                          </div>
+                        )}
                       </div>
                     )}
                     {msg.content}
