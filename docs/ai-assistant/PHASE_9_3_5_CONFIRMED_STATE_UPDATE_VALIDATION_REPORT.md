@@ -241,3 +241,15 @@ Phase 9.3 已验证通过（typecheck exit 0, lint 0 errors）。Phase 9.3.5 未
 ## 20. 是否可以进入真实环境手动测试阶段
 
 **是。** 所有安全验证通过，可在完整 Django 环境中进行手动确认流程测试。
+
+---
+
+## 21. Phase 9.3.6 测试计划记录（2026-05-28）
+
+Phase 9.3.6 设计了 runtime test plan，详见 [`PHASE_9_3_6_CONFIRMED_STATE_UPDATE_RUNTIME_TEST_PLAN.md`](./PHASE_9_3_6_CONFIRMED_STATE_UPDATE_RUNTIME_TEST_PLAN.md)。
+
+**测试计划**：
+
+- 4 个成功路径 + 12 个拒绝路径测试用例
+- 9 个安全检查项
+- 回滚方案 + step-by-step 命令

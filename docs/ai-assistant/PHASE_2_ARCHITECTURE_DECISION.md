@@ -750,3 +750,18 @@ ENABLE_AI_MCP_RUNTIME=false        # 是否启用 MCP Runtime
 - ✅ 不调用 stdio/plane-mcp-server write
 - ✅ audit events 安全
 - ✅ 无需代码修复
+
+---
+
+## 39. 第 9.3.6 阶段设计记录（2026-05-28）
+
+第 9.3.6 阶段设计了 confirmed state update runtime test plan，详见 [`PHASE_9_3_6_CONFIRMED_STATE_UPDATE_RUNTIME_TEST_PLAN.md`](./PHASE_9_3_6_CONFIRMED_STATE_UPDATE_RUNTIME_TEST_PLAN.md)。
+
+**设计结论**：
+
+- ✅ 4 个成功路径测试用例
+- ✅ 12 个拒绝路径测试用例
+- ✅ 9 个安全检查项
+- ✅ 回滚方案
+- ✅ step-by-step runtime 测试命令
+- ✅ 仅限 dev/staging 环境

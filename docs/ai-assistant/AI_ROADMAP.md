@@ -832,6 +832,23 @@
 
 ---
 
+## Phase 9.3.6: Runtime Test Plan ✅
+
+**Goal**: Design runtime test plan for confirmed state update.
+
+**Plan**:
+
+- 4 success path test cases (ADMIN/MEMBER proposed + confirm)
+- 12 rejection path test cases (token expired/tampered/mismatch, permission denied, etc.)
+- 9 security checks
+- Rollback plan
+- Step-by-step runtime test commands
+- Dev/staging only, no production testing
+
+**Report**: See [PHASE_9_3_6_CONFIRMED_STATE_UPDATE_RUNTIME_TEST_PLAN.md](./PHASE_9_3_6_CONFIRMED_STATE_UPDATE_RUNTIME_TEST_PLAN.md)
+
+---
+
 ## Phase 8: Audit Logging
 
 **Goal**: Implement comprehensive audit logging for AI operations.
