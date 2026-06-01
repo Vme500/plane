@@ -682,3 +682,20 @@ ENABLE_AI_MCP_RUNTIME=false        # 是否启用 MCP Runtime
 - ✅ audit events（ai.write.proposed, ai.write.rejected）
 - ✅ 不执行任何真实写操作
 - ✅ py_compile/typecheck/lint 通过
+
+---
+
+## 35. 第 9.1.5 阶段验证记录（2026-05-28）
+
+第 9.1.5 阶段验证了 write confirmation preview 安全性，详见 [`PHASE_9_1_5_WRITE_CONFIRMATION_PREVIEW_VALIDATION_REPORT.md`](./PHASE_9_1_5_WRITE_CONFIRMATION_PREVIEW_VALIDATION_REPORT.md)。
+
+**验证结果**：
+
+- ✅ proposed_action 只包含安全字段
+- ✅ execution_enabled 始终 false
+- ✅ Confirm 按钮 disabled/no-op
+- ✅ confirm_action_id 返回 execution_not_enabled
+- ✅ 不执行真实写操作
+- ✅ 不调用 stdio/mcp-server write
+- ✅ grep 无真实写入风险
+- ✅ 无需代码修复

@@ -176,3 +176,16 @@ raw prompt, raw result, raw MCP result, token, API key, cookie, password, header
 - 实现真实 update_work_item_state（走 Plane 内部权限校验）
 - 实现 execution_enabled=true 的确认执行流程
 - 实现过期 token 检查
+
+---
+
+## 21. Phase 9.1.5 验证记录（2026-05-28）
+
+Phase 9.1.5 验证了 write confirmation preview 安全性，详见 [`PHASE_9_1_5_WRITE_CONFIRMATION_PREVIEW_VALIDATION_REPORT.md`](./PHASE_9_1_5_WRITE_CONFIRMATION_PREVIEW_VALIDATION_REPORT.md)。
+
+**验证结果**：
+
+- ✅ proposed_action 安全，execution_enabled 始终 false
+- ✅ Confirm disabled/no-op
+- ✅ 不执行真实写操作
+- ✅ 无需代码修复
