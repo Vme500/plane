@@ -904,6 +904,28 @@
 
 ---
 
+## Phase 9.3.7C: Isolated Dev Stack Files ✅
+
+**Goal**: Create isolated dev stack configuration files.
+
+**Files Created**:
+
+- `docker-compose.ai-dev.yml` (API, Web, DB, Redis, Worker)
+- `.env.ai-dev.example` (no secrets)
+- `.gitignore` updated (`.env.ai-dev.local`)
+
+**Config**:
+
+- API port: 18180
+- Web port: 18181
+- Postgres volume: `plane_ai_dev_pgdata`
+- Redis volume: `plane_ai_dev_redisdata`
+- AI flags: ENABLE_AI_ASSISTANT=1, ENABLE_AI_MCP_RUNTIME=1
+
+**Report**: See [PHASE_9_3_7C_ISOLATED_DEV_STACK_FILES_REPORT.md](./PHASE_9_3_7C_ISOLATED_DEV_STACK_FILES_REPORT.md)
+
+---
+
 ## Phase 8: Audit Logging
 
 **Goal**: Implement comprehensive audit logging for AI operations.

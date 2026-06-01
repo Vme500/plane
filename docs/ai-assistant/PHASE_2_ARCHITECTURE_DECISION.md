@@ -810,3 +810,17 @@ ENABLE_AI_MCP_RUNTIME=false        # 是否启用 MCP Runtime
 - ✅ AI flags: ENABLE_AI_ASSISTANT=1, ENABLE_AI_MCP_RUNTIME=1
 - ✅ Migration 策略：仅应用到 dev DB
 - ✅ 测试数据：一次性 workspace/project/issue
+
+---
+
+## 43. 第 9.3.7C 阶段实施记录（2026-05-28）
+
+第 9.3.7C 阶段创建了 isolated dev stack 配置文件，详见 [`PHASE_9_3_7C_ISOLATED_DEV_STACK_FILES_REPORT.md`](./PHASE_9_3_7C_ISOLATED_DEV_STACK_FILES_REPORT.md)。
+
+**实施范围**：
+
+- ✅ 新增 `docker-compose.ai-dev.yml`（API, Web, DB, Redis, Worker）
+- ✅ 新增 `.env.ai-dev.example`（无 secret）
+- ✅ 修改 `.gitignore`（添加 `.env.ai-dev.local`）
+- ✅ 端口：API 18180, Web 18181
+- ✅ 独立 volume：`plane_ai_dev_pgdata`, `plane_ai_dev_redisdata`

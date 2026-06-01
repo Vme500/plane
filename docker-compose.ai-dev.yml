@@ -1,0 +1,104 @@
+# Isolated AI Dev Stack for runtime testing of fork code.
+# DO NOT use with production data.
+# Usage:
+#   cp .env.ai-dev.example .env.ai-dev.local
+#   # Edit .env.ai-dev.local with real values
+#   docker compose -f docker-compose.ai-dev.yml -p plane-ai-dev up -d --build
+#   docker compose -f docker-compose.ai-dev.yml -p plane-ai-dev exec api python manage.py migrate
+#   # Access API at http://localhost:18180
+
+services:
+  plane-ai-dev-api:
+    container_name: plane-ai-dev-api
+    build:
+      context: .
+      dockerfile: ./apps/api/Dockerfile.dev
+    restart: unless-stopped
+    depends_on:
+      - plane-ai-dev-db
+      - plane-ai-dev-redis
+    env_file:
+      - .env.ai-dev.local
+    environment:
+      DATABASE_URL: postgresql://${POSTGRES_USER}:${POSTGRES_PASSWORD}@plane-ai-dev-db:5432/${POSTGRES_DB}
+      REDIS_HOST: plane-ai-dev-redis
+      REDIS_PORT: 6379
+    ports:
+      - "18180:8000"
+    networks:
+      - plane-ai-dev-net
+    volumes:
+      - ./apps/api:/code/plane
+
+  plane-ai-dev-web:
+    container_name: plane-ai-dev-web
+    build:
+      context: .
+      dockerfile: ./apps/web/Dockerfile.web
+      args:
+        DOCKER_BUILDKIT: 1
+    restart: unless-stopped
+    depends_on:
+      - plane-ai-dev-api
+    ports:
+      - "18181:3000"
+    networks:
+      - plane-ai-dev-net
+
+  plane-ai-dev-db:
+    container_name: plane-ai-dev-db
+    image: postgres:15.7-alpine
+    restart: unless-stopped
+    volumes:
+      - plane_ai_dev_pgdata:/var/lib/postgresql/data
+    env_file:
+      - .env.ai-dev.local
+    environment:
+      POSTGRES_USER: ${POSTGRES_USER}
+      POSTGRES_PASSWORD: ${POSTGRES_PASSWORD}
+      POSTGRES_DB: ${POSTGRES_DB}
+      PGDATA: /var/lib/postgresql/data
+    ports:
+      - "15432:5432"
+    networks:
+      - plane-ai-dev-net
+
+  plane-ai-dev-redis:
+    container_name: plane-ai-dev-redis
+    image: valkey/valkey:7.2.11-alpine
+    restart: unless-stopped
+    volumes:
+      - plane_ai_dev_redisdata:/data
+    ports:
+      - "16379:6379"
+    networks:
+      - plane-ai-dev-net
+
+  plane-ai-dev-worker:
+    container_name: plane-ai-dev-worker
+    build:
+      context: .
+      dockerfile: ./apps/api/Dockerfile.dev
+    restart: unless-stopped
+    depends_on:
+      - plane-ai-dev-db
+      - plane-ai-dev-redis
+    env_file:
+      - .env.ai-dev.local
+    environment:
+      DATABASE_URL: postgresql://${POSTGRES_USER}:${POSTGRES_PASSWORD}@plane-ai-dev-db:5432/${POSTGRES_DB}
+      REDIS_HOST: plane-ai-dev-redis
+      REDIS_PORT: 6379
+    command: celery -A plane worker -l info
+    networks:
+      - plane-ai-dev-net
+    volumes:
+      - ./apps/api:/code/plane
+
+volumes:
+  plane_ai_dev_pgdata:
+  plane_ai_dev_redisdata:
+
+networks:
+  plane-ai-dev-net:
+    name: plane-ai-dev-net
