@@ -838,3 +838,18 @@ ENABLE_AI_MCP_RUNTIME=false        # 是否启用 MCP Runtime
 - ✅ 修复 API/Worker build context 路径
 - ⚠️ Build 失败：网络超时（Docker Hub、npm、APK 镜像）
 - ❌ 未启动容器（需稳定网络重试）
+
+---
+
+## 45. 第 9.3.7D-1 阶段记录（2026-05-28）
+
+第 9.3.7D-1 阶段诊断网络问题并重试 build，详见 [`PHASE_9_3_7D_1_BUILD_NETWORK_RETRY_REPORT.md`](./PHASE_9_3_7D_1_BUILD_NETWORK_RETRY_REPORT.md)。
+
+**结果**：
+
+- ✅ 网络诊断：Docker Hub/npm/Alpine 全部可达
+- ✅ Build 成功（API, Web, Worker）
+- ✅ 所有 5 容器启动
+- ✅ 修复：添加 REDIS_URL 环境变量
+- ⚠️ API 等待 migration（502）
+- ✅ Web 正常（200）

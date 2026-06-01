@@ -139,6 +139,19 @@
 
 ---
 
+## 20. Phase 9.3.7D-1 重试记录（2026-05-28）
+
+Phase 9.3.7D-1 诊断网络问题并重试 build，详见 [`PHASE_9_3_7D_1_BUILD_NETWORK_RETRY_REPORT.md`](./PHASE_9_3_7D_1_BUILD_NETWORK_RETRY_REPORT.md)。
+
+**结果**：
+
+- ✅ 网络恢复，Build 成功
+- ✅ 所有容器启动
+- ✅ 修复 REDIS_URL
+- ⚠️ API 等待 migration
+
+---
+
 ## 后续重试步骤
 
 ```bash

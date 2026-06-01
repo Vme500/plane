@@ -23,6 +23,7 @@ services:
       DATABASE_URL: postgresql://${POSTGRES_USER}:${POSTGRES_PASSWORD}@plane-ai-dev-db:5432/${POSTGRES_DB}
       REDIS_HOST: plane-ai-dev-redis
       REDIS_PORT: 6379
+      REDIS_URL: redis://plane-ai-dev-redis:6379/0
     ports:
       - "18180:8000"
     networks:
@@ -87,6 +88,7 @@ services:
       DATABASE_URL: postgresql://${POSTGRES_USER}:${POSTGRES_PASSWORD}@plane-ai-dev-db:5432/${POSTGRES_DB}
       REDIS_HOST: plane-ai-dev-redis
       REDIS_PORT: 6379
+      REDIS_URL: redis://plane-ai-dev-redis:6379/0
     command: celery -A plane worker -l info
     networks:
       - plane-ai-dev-net
