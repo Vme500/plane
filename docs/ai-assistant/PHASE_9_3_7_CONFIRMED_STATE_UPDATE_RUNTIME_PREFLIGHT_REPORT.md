@@ -171,3 +171,11 @@ curl -s -X POST http://localhost:18080/api/workspaces/<slug>/ai-assistant/ \
 | 6. 选择测试 project               | ❌ 未完成 |                            |
 | 7. 选择测试 issue                 | ❌ 未完成 |                            |
 | 8. 选择测试 states (A, B)         | ❌ 未完成 |                            |
+
+---
+
+## 环境就绪性结论（Phase 9.3.7A）
+
+详见 [`PHASE_9_3_7A_RUNTIME_ENVIRONMENT_READINESS_REPORT.md`](./PHASE_9_3_7A_RUNTIME_ENVIRONMENT_READINESS_REPORT.md)。
+
+**结论**：localhost:18080 运行官方 Plane v1.3.1 镜像，不含 fork 代码。需要构建独立 dev stack 才能测试。

@@ -781,3 +781,17 @@ ENABLE_AI_MCP_RUNTIME=false        # 是否启用 MCP Runtime
 - ⚠️ LLM 未配置（`has_llm_configured=false`）
 - ❌ 测试数据未选择（环境未就绪）
 - ✅ 未执行 Confirm，未修改数据
+
+---
+
+## 41. 第 9.3.7A 阶段调研记录（2026-05-28）
+
+第 9.3.7A 阶段调研了 runtime environment readiness，详见 [`PHASE_9_3_7A_RUNTIME_ENVIRONMENT_READINESS_REPORT.md`](./PHASE_9_3_7A_RUNTIME_ENVIRONMENT_READINESS_REPORT.md)。
+
+**调研结论**：
+
+- ❌ localhost:18080 运行官方 Plane v1.3.1，不含 fork 代码
+- ❌ 数据库可能包含真实数据
+- ❌ AIAuditEvent migration 未应用
+- ❌ AI feature flags 不存在于官方镜像
+- ✅ 推荐：构建独立 dev stack 从 fork 分支
