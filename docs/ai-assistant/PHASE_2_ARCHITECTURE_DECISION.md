@@ -795,3 +795,18 @@ ENABLE_AI_MCP_RUNTIME=false        # 是否启用 MCP Runtime
 - ❌ AIAuditEvent migration 未应用
 - ❌ AI feature flags 不存在于官方镜像
 - ✅ 推荐：构建独立 dev stack 从 fork 分支
+
+---
+
+## 42. 第 9.3.7B 阶段设计记录（2026-05-28）
+
+第 9.3.7B 阶段设计了独立 fork dev stack，详见 [`PHASE_9_3_7B_ISOLATED_DEV_STACK_DESIGN.md`](./PHASE_9_3_7B_ISOLATED_DEV_STACK_DESIGN.md)。
+
+**设计结论**：
+
+- ✅ `docker-compose.ai-dev.yml` 使用独立 volume/端口
+- ✅ API 端口 18180（不与 18080 冲突）
+- ✅ `.env.ai-dev.example`（可提交）+ `.env.ai-dev.local`（gitignored）
+- ✅ AI flags: ENABLE_AI_ASSISTANT=1, ENABLE_AI_MCP_RUNTIME=1
+- ✅ Migration 策略：仅应用到 dev DB
+- ✅ 测试数据：一次性 workspace/project/issue

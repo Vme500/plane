@@ -886,6 +886,24 @@
 
 ---
 
+## Phase 9.3.7B: Isolated Dev Stack Design ✅
+
+**Goal**: Design isolated dev stack for runtime testing.
+
+**Design**:
+
+- New `docker-compose.ai-dev.yml` with independent volumes/ports
+- API port: 18180 (not 18080)
+- Independent Postgres/Redis volumes
+- `.env.ai-dev.example` (committed) + `.env.ai-dev.local` (gitignored)
+- AI flags enabled: ENABLE_AI_ASSISTANT=1, ENABLE_AI_MCP_RUNTIME=1
+- Migration strategy: apply 0122 to dev DB only
+- Test data: one-time workspace/project/issue
+
+**Report**: See [PHASE_9_3_7B_ISOLATED_DEV_STACK_DESIGN.md](./PHASE_9_3_7B_ISOLATED_DEV_STACK_DESIGN.md)
+
+---
+
 ## Phase 8: Audit Logging
 
 **Goal**: Implement comprehensive audit logging for AI operations.

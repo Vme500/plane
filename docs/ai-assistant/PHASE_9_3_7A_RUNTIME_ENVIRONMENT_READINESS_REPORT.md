@@ -167,3 +167,16 @@
 ## 17. 是否可以进入环境启用阶段
 
 **有条件。** 需要先构建 fork Docker 镜像并启动独立 dev stack。当前环境不兼容 fork 代码。
+
+---
+
+## 18. Phase 9.3.7B 设计记录（2026-05-28）
+
+Phase 9.3.7B 设计了独立 fork dev stack，详见 [`PHASE_9_3_7B_ISOLATED_DEV_STACK_DESIGN.md`](./PHASE_9_3_7B_ISOLATED_DEV_STACK_DESIGN.md)。
+
+**设计结论**：
+
+- `docker-compose.ai-dev.yml` 使用独立 volume/端口
+- API 端口 18180
+- AI flags 已设计
+- Migration 策略已设计
