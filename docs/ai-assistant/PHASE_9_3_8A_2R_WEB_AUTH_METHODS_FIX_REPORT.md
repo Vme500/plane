@@ -116,3 +116,14 @@ Web UI 显示："No authentication methods available — Please contact your adm
 ## 15. 是否可以进入 Phase 9.3.8A-3
 
 **有条件。** 需要用户确认 Web UI 显示登录表单后，再进入 confirmation card 验证。
+
+---
+
+## 16. Phase 9.3.8A-2R2 验证记录（2026-06-02）
+
+Phase 9.3.8A-2R2 验证了 nginx proxy，详见 [`PHASE_9_3_8A_2R2_WEB_PROXY_EFFECTIVE_FIX_REPORT.md`](./PHASE_9_3_8A_2R2_WEB_PROXY_EFFECTIVE_FIX_REPORT.md)。
+
+**结果**：
+
+- ✅ nginx proxy 已生效（curl 返回 JSON）
+- ⚠️ 浏览器仍显示 "No authentication methods available"（可能是缓存）

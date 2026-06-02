@@ -937,3 +937,16 @@ ENABLE_AI_MCP_RUNTIME=false        # 是否启用 MCP Runtime
 - ✅ 修复：新增 `nginx-dev.conf`，挂载到 dev compose
 - ✅ API 配置通过 proxy 可访问
 - ✅ `is_email_password_enabled: True`
+
+---
+
+## 52. 第 9.3.8A-2R2 阶段验证记录（2026-06-02）
+
+第 9.3.8A-2R2 阶段验证了 nginx API proxy，详见 [`PHASE_9_3_8A_2R2_WEB_PROXY_EFFECTIVE_FIX_REPORT.md`](./PHASE_9_3_8A_2R2_WEB_PROXY_EFFECTIVE_FIX_REPORT.md)。
+
+**结果**：
+
+- ✅ nginx proxy 已生效（curl 返回 JSON）
+- ✅ API 返回 `is_email_password_enabled: true`
+- ⚠️ 浏览器仍显示 "No authentication methods available"（可能是缓存问题）
+- ⚠️ 需要用户用无痕窗口验证

@@ -1061,6 +1061,22 @@
 
 ---
 
+## Phase 9.3.8A-2R2: Web Proxy Verification ⚠️
+
+**Goal**: Verify nginx API proxy is effective.
+
+**Findings**:
+
+- nginx proxy IS working (curl returns JSON)
+- API returns `is_email_password_enabled: true`
+- Browser still shows "No authentication methods available"
+- Likely cause: browser cache or SWR cache
+- Needs user verification with incognito window
+
+**Report**: See [PHASE_9_3_8A_2R2_WEB_PROXY_EFFECTIVE_FIX_REPORT.md](./PHASE_9_3_8A_2R2_WEB_PROXY_EFFECTIVE_FIX_REPORT.md)
+
+---
+
 ## Phase 8: Audit Logging
 
 **Goal**: Implement comprehensive audit logging for AI operations.
