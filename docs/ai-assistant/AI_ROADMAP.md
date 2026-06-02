@@ -1133,6 +1133,16 @@
 
 ---
 
+## Phase 9.3.8A-3R3: MCP Proposed Action Routing Fix ✅
+
+**Root Cause**: Intent parser only supported English keywords. Chinese prompt "将...状态改为..." didn't match.
+
+**Fix**: Added Chinese keywords to write intent detection.
+
+**Report**: See [PHASE_9_3_8A_3R3_MCP_PROPOSED_ACTION_ROUTING_REPORT.md](./PHASE_9_3_8A_3R3_MCP_PROPOSED_ACTION_ROUTING_REPORT.md)
+
+---
+
 ## Phase 8: Audit Logging
 
 **Goal**: Implement comprehensive audit logging for AI operations.

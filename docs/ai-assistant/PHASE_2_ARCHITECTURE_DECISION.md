@@ -1007,3 +1007,15 @@ ENABLE_AI_MCP_RUNTIME=false        # 是否启用 MCP Runtime
 
 - ✅ Root cause：用户未切换到 MCP 模式，默认 Standard Chat 调用 OpenAI 失败
 - ✅ 无代码修改，用户需点击 "MCP Read-only" 按钮
+
+---
+
+## 58. 第 9.3.8A-3R3 阶段修复记录（2026-06-02）
+
+第 9.3.8A-3R3 阶段修复了 MCP proposed_action routing 问题，详见 [`PHASE_9_3_8A_3R3_MCP_PROPOSED_ACTION_ROUTING_REPORT.md`](./PHASE_9_3_8A_3R3_MCP_PROPOSED_ACTION_ROUTING_REPORT.md)。
+
+**结果**：
+
+- ✅ Root cause：intent parser 只支持英文关键词
+- ✅ 修复：添加中文关键词（状态改为、改为等）
+- ✅ Django shell 验证 proposed_action 生成成功

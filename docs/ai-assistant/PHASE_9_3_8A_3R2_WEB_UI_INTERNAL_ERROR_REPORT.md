@@ -57,3 +57,15 @@ openai.AuthenticationError: Error code: 401 - Incorrect API key provided: replac
    将 work item 7c63e4ec-6311-495d-b5b9-07de2ef2a21e 的状态改为 42fa6103-d432-4596-9c7e-d5e8bb238f54
    ```
 6. **不要点击 Confirm**
+
+---
+
+## 7. Phase 9.3.8A-3R3 修复记录（2026-06-02）
+
+Phase 9.3.8A-3R3 修复了 MCP routing 问题，详见 [`PHASE_9_3_8A_3R3_MCP_PROPOSED_ACTION_ROUTING_REPORT.md`](./PHASE_9_3_8A_3R3_MCP_PROPOSED_ACTION_ROUTING_REPORT.md)。
+
+**修复**：
+
+- Root cause：intent parser 只支持英文关键词
+- 添加中文关键词（状态改为、改为等）
+- API 已重建并重启

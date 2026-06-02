@@ -115,7 +115,12 @@ def parse_mcp_intent(prompt: str) -> Dict[str, Any]:
         return {"tool_name": "search_work_items", "params": {"query": prompt}}
 
     # Write intent detection (Phase 9.3 - with UUID extraction)
-    if any(word in prompt_lower for word in ["change state", "update status", "mark as", "set state", "move to"]):
+    # Supports English and Chinese keywords
+    if any(word in prompt_lower for word in [
+        "change state", "update status", "mark as", "set state", "move to",
+        "update_work_item_state",
+        "状态改为", "状态更改为", "改为", "状态设为",
+    ]):
         # Extract UUIDs from prompt
         import re
         uuid_pattern = r"[0-9a-f]{8}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{12}"
