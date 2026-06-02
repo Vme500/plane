@@ -996,3 +996,14 @@ ENABLE_AI_MCP_RUNTIME=false        # 是否启用 MCP Runtime
 
 - ✅ Root cause：`create_ai_audit_event(user_id=...)` 参数名错误
 - ✅ 修复：`user_id=` → `actor_id=`（2 处）
+
+---
+
+## 57. 第 9.3.8A-3R2 阶段诊断记录（2026-06-02）
+
+第 9.3.8A-3R2 阶段诊断了 Web UI internal error，详见 [`PHASE_9_3_8A_3R2_WEB_UI_INTERNAL_ERROR_REPORT.md`](./PHASE_9_3_8A_3R2_WEB_UI_INTERNAL_ERROR_REPORT.md)。
+
+**结果**：
+
+- ✅ Root cause：用户未切换到 MCP 模式，默认 Standard Chat 调用 OpenAI 失败
+- ✅ 无代码修改，用户需点击 "MCP Read-only" 按钮

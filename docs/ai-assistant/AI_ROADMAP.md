@@ -1123,6 +1123,16 @@
 
 ---
 
+## Phase 9.3.8A-3R2: Web UI Mode Selection Issue ✅
+
+**Root Cause**: User didn't switch to "MCP Read-only" mode. Default "Standard Chat" calls OpenAI with placeholder key.
+
+**Fix**: User needs to click "MCP Read-only" button before entering UUID instruction.
+
+**Report**: See [PHASE_9_3_8A_3R2_WEB_UI_INTERNAL_ERROR_REPORT.md](./PHASE_9_3_8A_3R2_WEB_UI_INTERNAL_ERROR_REPORT.md)
+
+---
+
 ## Phase 8: Audit Logging
 
 **Goal**: Implement comprehensive audit logging for AI operations.

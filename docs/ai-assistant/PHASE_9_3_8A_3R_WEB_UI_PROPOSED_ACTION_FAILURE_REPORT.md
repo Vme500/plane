@@ -62,3 +62,11 @@ TypeError: create_ai_audit_event() got an unexpected keyword argument 'user_id'
 ## 7. 是否可以进入 Phase 9.3.8A-3
 
 **是。** API 已重启，用户可重试 pi-chat 指令。
+
+---
+
+## 8. Phase 9.3.8A-3R2 诊断记录（2026-06-02）
+
+Phase 9.3.8A-3R2 诊断了重试后的 internal error，详见 [`PHASE_9_3_8A_3R2_WEB_UI_INTERNAL_ERROR_REPORT.md`](./PHASE_9_3_8A_3R2_WEB_UI_INTERNAL_ERROR_REPORT.md)。
+
+**Root cause**：用户未切换到 MCP 模式，默认 Standard Chat 调用 OpenAI 失败（placeholder API key）。
