@@ -1019,3 +1019,16 @@ ENABLE_AI_MCP_RUNTIME=false        # 是否启用 MCP Runtime
 - ✅ Root cause：intent parser 只支持英文关键词
 - ✅ 修复：添加中文关键词（状态改为、改为等）
 - ✅ Django shell 验证 proposed_action 生成成功
+
+---
+
+## 59. 第 9.3.8A-3R4 阶段记录（2026-06-02）
+
+第 9.3.8A-3R4 阶段记录了 confirmation card 成功并修复了 Confirm button 缺失问题，详见 [`PHASE_9_3_8A_3R4_CONFIRMATION_CARD_NO_CONFIRM_REPORT.md`](./PHASE_9_3_8A_3R4_CONFIRMATION_CARD_NO_CONFIRM_REPORT.md)。
+
+**结果**：
+
+- ✅ Confirmation card 成功显示
+- ✅ Root cause：Web 容器未重建（Phase 9.1 代码未包含）
+- ✅ 修复：重建 Web 容器
+- ✅ Confirm button 代码已包含

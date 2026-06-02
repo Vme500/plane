@@ -69,3 +69,14 @@ confirmation_token exists: True
    ```
 4. 观察 confirmation card
 5. **不要点击 Confirm**
+
+---
+
+## 8. Phase 9.3.8A-3R4 记录（2026-06-02）
+
+Phase 9.3.8A-3R4 记录了 confirmation card 成功并修复了 Confirm button 缺失，详见 [`PHASE_9_3_8A_3R4_CONFIRMATION_CARD_NO_CONFIRM_REPORT.md`](./PHASE_9_3_8A_3R4_CONFIRMATION_CARD_NO_CONFIRM_REPORT.md)。
+
+**结果**：
+
+- ✅ Confirmation card 成功显示
+- ✅ Web 容器已重建（Confirm button 代码已包含）
