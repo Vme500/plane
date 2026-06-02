@@ -911,3 +911,16 @@ ENABLE_AI_MCP_RUNTIME=false        # 是否启用 MCP Runtime
 - ⚠️ API session auth 受限（sign-in 500，缺少 email 配置）
 - ✅ Issue state 未变
 - ⚠️ Web UI confirmation card 未验证（需手动测试）
+
+---
+
+## 50. 第 9.3.8A-2 阶段诊断记录（2026-06-02）
+
+第 9.3.8A-2 阶段诊断了 sign-in 500 问题，详见 [`PHASE_9_3_8A_2_AUTH_SESSION_READINESS_REPORT.md`](./PHASE_9_3_8A_2_AUTH_SESSION_READINESS_REPORT.md)。
+
+**结果**：
+
+- ✅ Root cause：`APP_BASE_URL`/`WEB_URL` 未设置
+- ✅ 修复：添加 URL 环境变量
+- ✅ Sign-in 返回 302（不再 500）
+- ⚠️ curl 无法捕获 session cookie（前端-mediated flow）

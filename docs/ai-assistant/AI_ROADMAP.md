@@ -1033,6 +1033,20 @@
 
 ---
 
+## Phase 9.3.8A-2: Auth/Session Readiness ✅
+
+**Goal**: Diagnose and fix sign-in 500 error.
+
+**Root Cause**: `APP_BASE_URL` and `WEB_URL` not set in dev env.
+
+**Fix**: Added URL env vars to `.env.ai-dev.local` and `.env.ai-dev.example`.
+
+**Result**: Sign-in returns 302 (no longer 500).
+
+**Report**: See [PHASE_9_3_8A_2_AUTH_SESSION_READINESS_REPORT.md](./PHASE_9_3_8A_2_AUTH_SESSION_READINESS_REPORT.md)
+
+---
+
 ## Phase 8: Audit Logging
 
 **Goal**: Implement comprehensive audit logging for AI operations.

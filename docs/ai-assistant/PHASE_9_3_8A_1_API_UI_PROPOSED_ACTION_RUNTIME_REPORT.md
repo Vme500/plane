@@ -179,3 +179,15 @@
 ## 23. 是否可以进入 Phase 9.3.8B
 
 **有条件。** Django shell 验证通过，但 API/UI 验证受限于 session auth。建议先通过 Web UI 手动验证 confirmation card，再进入 Phase 9.3.8B。
+
+---
+
+## 24. Phase 9.3.8A-2 诊断记录（2026-06-02）
+
+Phase 9.3.8A-2 诊断了 sign-in 500 问题，详见 [`PHASE_9_3_8A_2_AUTH_SESSION_READINESS_REPORT.md`](./PHASE_9_3_8A_2_AUTH_SESSION_READINESS_REPORT.md)。
+
+**结果**：
+
+- ✅ Root cause：`APP_BASE_URL`/`WEB_URL` 未设置
+- ✅ 修复：添加 URL 环境变量
+- ✅ Sign-in 返回 302
