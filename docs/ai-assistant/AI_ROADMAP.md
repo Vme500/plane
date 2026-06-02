@@ -1111,6 +1111,18 @@
 
 ---
 
+## Phase 9.3.8A-3R: Web UI Proposed Action Failure Fix ✅
+
+**Goal**: Fix "Something went wrong" error on pi-chat.
+
+**Root Cause**: `create_ai_audit_event(user_id=...)` should be `actor_id=...`.
+
+**Fix**: Corrected parameter name (2 occurrences).
+
+**Report**: See [PHASE_9_3_8A_3R_WEB_UI_PROPOSED_ACTION_FAILURE_REPORT.md](./PHASE_9_3_8A_3R_WEB_UI_PROPOSED_ACTION_FAILURE_REPORT.md)
+
+---
+
 ## Phase 8: Audit Logging
 
 **Goal**: Implement comprehensive audit logging for AI operations.

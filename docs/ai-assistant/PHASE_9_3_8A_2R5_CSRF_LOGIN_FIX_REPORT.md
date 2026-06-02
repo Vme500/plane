@@ -58,3 +58,14 @@
 ## 7. 是否可以进入 Phase 9.3.8A-3
 
 **是。** CSRF 配置已修复，用户应能正常登录。
+
+---
+
+## 8. Phase 9.3.8A-3R 修复记录（2026-06-02）
+
+Phase 9.3.8A-3R 修复了 Web UI proposed_action 失败问题，详见 [`PHASE_9_3_8A_3R_WEB_UI_PROPOSED_ACTION_FAILURE_REPORT.md`](./PHASE_9_3_8A_3R_WEB_UI_PROPOSED_ACTION_FAILURE_REPORT.md)。
+
+**修复**：
+
+- Root cause：`create_ai_audit_event(user_id=...)` 参数名错误
+- 修复：`user_id=` → `actor_id=`（2 处）

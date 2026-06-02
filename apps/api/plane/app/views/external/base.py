@@ -272,7 +272,7 @@ class WorkspaceGPTIntegrationEndpoint(BaseAPIView):
         create_ai_audit_event(
             event="ai.request",
             workspace_slug=slug,
-            user_id=user_id,
+            actor_id=user_id,
             mode="standard",
             prompt_length=len(prompt) if prompt else 0,
         )
@@ -295,7 +295,7 @@ class WorkspaceGPTIntegrationEndpoint(BaseAPIView):
         create_ai_audit_event(
             event="ai.request.success",
             workspace_slug=slug,
-            user_id=user_id,
+            actor_id=user_id,
             mode="standard",
             duration_ms=duration_since(start),
         )
