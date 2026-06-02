@@ -1077,6 +1077,18 @@
 
 ---
 
+## Phase 9.3.8A-2R3: Instance Setup Fix ✅
+
+**Goal**: Fix instance setup/god-mode onboarding blocker.
+
+**Root Cause**: Superuser created via Django shell bypassed setup flow. `is_setup_done=false`.
+
+**Fix**: Set `is_setup_done=True`, `is_signup_screen_visited=True`, created `InstanceAdmin`.
+
+**Report**: See [PHASE_9_3_8A_2R3_INSTANCE_SETUP_FIX_REPORT.md](./PHASE_9_3_8A_2R3_INSTANCE_SETUP_FIX_REPORT.md)
+
+---
+
 ## Phase 8: Audit Logging
 
 **Goal**: Implement comprehensive audit logging for AI operations.

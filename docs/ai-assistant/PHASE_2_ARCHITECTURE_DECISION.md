@@ -950,3 +950,15 @@ ENABLE_AI_MCP_RUNTIME=false        # 是否启用 MCP Runtime
 - ✅ API 返回 `is_email_password_enabled: true`
 - ⚠️ 浏览器仍显示 "No authentication methods available"（可能是缓存问题）
 - ⚠️ 需要用户用无痕窗口验证
+
+---
+
+## 53. 第 9.3.8A-2R3 阶段修复记录（2026-06-02）
+
+第 9.3.8A-2R3 阶段修复了 instance setup blocker，详见 [`PHASE_9_3_8A_2R3_INSTANCE_SETUP_FIX_REPORT.md`](./PHASE_9_3_8A_2R3_INSTANCE_SETUP_FIX_REPORT.md)。
+
+**结果**：
+
+- ✅ Root cause：超级用户绕过 setup 流程
+- ✅ 修复：设置 `is_setup_done=True` + `is_signup_screen_visited=True`
+- ✅ 创建 `InstanceAdmin` 记录

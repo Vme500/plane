@@ -88,3 +88,15 @@
 ## 10. 是否可以进入 Phase 9.3.8A-3
 
 **有条件。** 需要用户确认 Web UI 显示登录表单。
+
+---
+
+## 11. Phase 9.3.8A-2R3 修复记录（2026-06-02）
+
+Phase 9.3.8A-2R3 修复了 instance setup blocker，详见 [`PHASE_9_3_8A_2R3_INSTANCE_SETUP_FIX_REPORT.md`](./PHASE_9_3_8A_2R3_INSTANCE_SETUP_FIX_REPORT.md)。
+
+**修复**：
+
+- `is_setup_done=True`
+- `is_signup_screen_visited=True`
+- 创建 `InstanceAdmin` 记录
