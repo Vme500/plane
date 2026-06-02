@@ -57,3 +57,14 @@ Phase 9.3.8A-2R3 重启了 API 容器，导致 API 容器获得新 IP（172.20.0
 ## 7. 是否可以进入 Phase 9.3.8A-3
 
 **是。** API 和 Web proxy 均恢复正常。
+
+---
+
+## 8. Phase 9.3.8A-2R5 修复记录（2026-06-02）
+
+Phase 9.3.8A-2R5 修复了 CSRF 登录问题，详见 [`PHASE_9_3_8A_2R5_CSRF_LOGIN_FIX_REPORT.md`](./PHASE_9_3_8A_2R5_CSRF_LOGIN_FIX_REPORT.md)。
+
+**修复**：
+
+- Root cause：`CSRF_TRUSTED_ORIGINS` 为空
+- 添加 `CSRF_TRUSTED_ORIGINS=http://localhost:18181`

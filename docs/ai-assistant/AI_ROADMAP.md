@@ -1099,6 +1099,18 @@
 
 ---
 
+## Phase 9.3.8A-2R5: CSRF Login Fix ✅
+
+**Goal**: Fix CSRF Verification Failed on login.
+
+**Root Cause**: `CSRF_TRUSTED_ORIGINS` empty. Django rejects cross-origin CSRF.
+
+**Fix**: Added `CSRF_TRUSTED_ORIGINS=http://localhost:18181` to env.
+
+**Report**: See [PHASE_9_3_8A_2R5_CSRF_LOGIN_FIX_REPORT.md](./PHASE_9_3_8A_2R5_CSRF_LOGIN_FIX_REPORT.md)
+
+---
+
 ## Phase 8: Audit Logging
 
 **Goal**: Implement comprehensive audit logging for AI operations.

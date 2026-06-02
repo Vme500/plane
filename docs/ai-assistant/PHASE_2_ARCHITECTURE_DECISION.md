@@ -974,3 +974,14 @@ ENABLE_AI_MCP_RUNTIME=false        # 是否启用 MCP Runtime
 - ✅ Root cause：nginx 缓存旧 API 容器 IP
 - ✅ 修复：重启 Web 容器
 - ✅ API 和 Web proxy 恢复正常
+
+---
+
+## 55. 第 9.3.8A-2R5 阶段修复记录（2026-06-02）
+
+第 9.3.8A-2R5 阶段修复了 CSRF 登录问题，详见 [`PHASE_9_3_8A_2R5_CSRF_LOGIN_FIX_REPORT.md`](./PHASE_9_3_8A_2R5_CSRF_LOGIN_FIX_REPORT.md)。
+
+**结果**：
+
+- ✅ Root cause：`CSRF_TRUSTED_ORIGINS` 为空
+- ✅ 修复：添加 `CSRF_TRUSTED_ORIGINS=http://localhost:18181`
