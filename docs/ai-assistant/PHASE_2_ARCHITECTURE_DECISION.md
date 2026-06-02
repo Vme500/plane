@@ -962,3 +962,15 @@ ENABLE_AI_MCP_RUNTIME=false        # 是否启用 MCP Runtime
 - ✅ Root cause：超级用户绕过 setup 流程
 - ✅ 修复：设置 `is_setup_done=True` + `is_signup_screen_visited=True`
 - ✅ 创建 `InstanceAdmin` 记录
+
+---
+
+## 54. 第 9.3.8A-2R4 阶段修复记录（2026-06-02）
+
+第 9.3.8A-2R4 阶段修复了 API 502 问题，详见 [`PHASE_9_3_8A_2R4_API_502_RECOVERY_REPORT.md`](./PHASE_9_3_8A_2R4_API_502_RECOVERY_REPORT.md)。
+
+**结果**：
+
+- ✅ Root cause：nginx 缓存旧 API 容器 IP
+- ✅ 修复：重启 Web 容器
+- ✅ API 和 Web proxy 恢复正常

@@ -99,3 +99,14 @@
 ## 12. 是否可以进入 Phase 9.3.8A-3
 
 **是。** 用户现在应该能进入登录页面。
+
+---
+
+## 13. Phase 9.3.8A-2R4 修复记录（2026-06-02）
+
+Phase 9.3.8A-2R4 修复了 API 502 问题，详见 [`PHASE_9_3_8A_2R4_API_502_RECOVERY_REPORT.md`](./PHASE_9_3_8A_2R4_API_502_RECOVERY_REPORT.md)。
+
+**修复**：
+
+- Root cause：nginx 缓存旧 API 容器 IP
+- 修复：重启 Web 容器

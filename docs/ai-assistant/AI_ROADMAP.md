@@ -1089,6 +1089,16 @@
 
 ---
 
+## Phase 9.3.8A-2R4: API 502 Recovery ✅
+
+**Goal**: Recover from 502 Bad Gateway after API container restart.
+
+**Root Cause**: nginx cached old API container IP. Restart fixed it.
+
+**Report**: See [PHASE_9_3_8A_2R4_API_502_RECOVERY_REPORT.md](./PHASE_9_3_8A_2R4_API_502_RECOVERY_REPORT.md)
+
+---
+
 ## Phase 8: Audit Logging
 
 **Goal**: Implement comprehensive audit logging for AI operations.
