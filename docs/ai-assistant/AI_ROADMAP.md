@@ -1047,6 +1047,20 @@
 
 ---
 
+## Phase 9.3.8A-2R: Web Auth Methods Fix ✅
+
+**Goal**: Fix "No authentication methods available" in Web UI.
+
+**Root Cause**: Web nginx didn't proxy API requests. Frontend couldn't read auth config.
+
+**Fix**: Added `nginx-dev.conf` with API proxy, mounted in dev compose.
+
+**Result**: `is_email_password_enabled: True` now accessible via proxy.
+
+**Report**: See [PHASE_9_3_8A_2R_WEB_AUTH_METHODS_FIX_REPORT.md](./PHASE_9_3_8A_2R_WEB_AUTH_METHODS_FIX_REPORT.md)
+
+---
+
 ## Phase 8: Audit Logging
 
 **Goal**: Implement comprehensive audit logging for AI operations.

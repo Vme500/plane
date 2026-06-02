@@ -41,6 +41,8 @@ services:
       - plane-ai-dev-api
     ports:
       - "18181:3000"
+    volumes:
+      - ./apps/web/nginx/nginx-dev.conf:/etc/nginx/nginx.conf:ro
     networks:
       - plane-ai-dev-net
 

@@ -138,3 +138,15 @@ SPACE_BASE_URL=http://localhost:18181
 ## 17. 是否可以进入 Phase 9.3.8A-3
 
 **是。** Sign-in 不再 500，可通过 Web UI 验证 confirmation card。
+
+---
+
+## 18. Phase 9.3.8A-2R 修复记录（2026-06-02）
+
+Phase 9.3.8A-2R 修复了 Web UI "No authentication methods available" 问题，详见 [`PHASE_9_3_8A_2R_WEB_AUTH_METHODS_FIX_REPORT.md`](./PHASE_9_3_8A_2R_WEB_AUTH_METHODS_FIX_REPORT.md)。
+
+**修复**：
+
+- 新增 `apps/web/nginx/nginx-dev.conf`（含 API proxy）
+- `docker-compose.ai-dev.yml` 挂载 dev nginx 配置
+- API 配置通过 proxy 可访问

@@ -924,3 +924,16 @@ ENABLE_AI_MCP_RUNTIME=false        # 是否启用 MCP Runtime
 - ✅ 修复：添加 URL 环境变量
 - ✅ Sign-in 返回 302（不再 500）
 - ⚠️ curl 无法捕获 session cookie（前端-mediated flow）
+
+---
+
+## 51. 第 9.3.8A-2R 阶段修复记录（2026-06-02）
+
+第 9.3.8A-2R 阶段修复了 Web UI "No authentication methods available" 问题，详见 [`PHASE_9_3_8A_2R_WEB_AUTH_METHODS_FIX_REPORT.md`](./PHASE_9_3_8A_2R_WEB_AUTH_METHODS_FIX_REPORT.md)。
+
+**结果**：
+
+- ✅ Root cause：Web nginx 不代理 API 请求
+- ✅ 修复：新增 `nginx-dev.conf`，挂载到 dev compose
+- ✅ API 配置通过 proxy 可访问
+- ✅ `is_email_password_enabled: True`
