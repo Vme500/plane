@@ -1015,6 +1015,24 @@
 
 ---
 
+## Phase 9.3.8A-1: API/UI Proposed Action Verification ⚠️
+
+**Goal**: Verify proposed_action via real API/UI.
+
+**Results**:
+
+- Django shell verification: ✅ passed
+- API session auth: ⚠️ limited (sign-in returns 500 in dev env)
+- Issue state unchanged: ✅ (still Todo)
+- ai.write.proposed recorded: ✅
+- No ai.write.executed: ✅
+
+**Next**: Web UI manual verification needed.
+
+**Report**: See [PHASE_9_3_8A_1_API_UI_PROPOSED_ACTION_RUNTIME_REPORT.md](./PHASE_9_3_8A_1_API_UI_PROPOSED_ACTION_RUNTIME_REPORT.md)
+
+---
+
 ## Phase 8: Audit Logging
 
 **Goal**: Implement comprehensive audit logging for AI operations.

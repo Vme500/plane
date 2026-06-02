@@ -898,3 +898,16 @@ ENABLE_AI_MCP_RUNTIME=false        # 是否启用 MCP Runtime
 - ✅ Issue state 未变（仍为 Todo）
 - ✅ ai.write.proposed 审计事件记录
 - ✅ 无 ai.write.executed
+
+---
+
+## 49. 第 9.3.8A-1 阶段验证记录（2026-06-02）
+
+第 9.3.8A-1 阶段验证了 API/UI proposed_action，详见 [`PHASE_9_3_8A_1_API_UI_PROPOSED_ACTION_RUNTIME_REPORT.md`](./PHASE_9_3_8A_1_API_UI_PROPOSED_ACTION_RUNTIME_REPORT.md)。
+
+**结果**：
+
+- ✅ Django shell 验证通过
+- ⚠️ API session auth 受限（sign-in 500，缺少 email 配置）
+- ✅ Issue state 未变
+- ⚠️ Web UI confirmation card 未验证（需手动测试）

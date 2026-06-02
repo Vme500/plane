@@ -153,3 +153,15 @@
 ## 20. 是否可以进入 Phase 9.3.8B
 
 **是。** proposed_action 生成验证通过，可进入 Confirm execution test。
+
+---
+
+## 22. Phase 9.3.8A-1 验证记录（2026-06-02）
+
+Phase 9.3.8A-1 尝试通过 API/UI 验证 proposed_action，详见 [`PHASE_9_3_8A_1_API_UI_PROPOSED_ACTION_RUNTIME_REPORT.md`](./PHASE_9_3_8A_1_API_UI_PROPOSED_ACTION_RUNTIME_REPORT.md)。
+
+**结果**：
+
+- ✅ Django shell 验证通过
+- ⚠️ API session auth 受限（sign-in 500）
+- ⚠️ Web UI confirmation card 需手动验证
