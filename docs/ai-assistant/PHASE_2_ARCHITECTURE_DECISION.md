@@ -882,3 +882,19 @@ ENABLE_AI_MCP_RUNTIME=false        # 是否启用 MCP Runtime
 - ✅ 两个 state（Todo / In Progress）创建
 - ✅ 测试用户 ADMIN (20)
 - ✅ 数据完整性验证通过
+
+---
+
+## 48. 第 9.3.8A 阶段验证记录（2026-06-02）
+
+第 9.3.8A 阶段验证了 proposed_action 运行时生成，详见 [`PHASE_9_3_8A_PROPOSED_ACTION_RUNTIME_REPORT.md`](./PHASE_9_3_8A_PROPOSED_ACTION_RUNTIME_REPORT.md)。
+
+**结果**：
+
+- ✅ proposed_action 生成成功
+- ✅ execution_enabled=True
+- ✅ current_value=Todo, proposed_value=In Progress
+- ✅ confirmation_token 存在（未输出）
+- ✅ Issue state 未变（仍为 Todo）
+- ✅ ai.write.proposed 审计事件记录
+- ✅ 无 ai.write.executed
