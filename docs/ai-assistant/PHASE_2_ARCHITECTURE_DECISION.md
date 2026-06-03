@@ -1032,3 +1032,16 @@ ENABLE_AI_MCP_RUNTIME=false        # 是否启用 MCP Runtime
 - ✅ Root cause：Web 容器未重建（Phase 9.1 代码未包含）
 - ✅ 修复：重建 Web 容器
 - ✅ Confirm button 代码已包含
+
+---
+
+## 61. 第 9.3.8A-4R5 阶段修复记录（2026-06-02）
+
+第 9.3.8A-4R5 阶段修复了 Confirm button 可见性，详见 [`PHASE_9_3_8A_4R5_CONFIRM_BUTTON_AUTONOMOUS_FIX_REPORT.md`](./PHASE_9_3_8A_4R5_CONFIRM_BUTTON_AUTONOMOUS_FIX_REPORT.md)。
+
+**结果**：
+
+- ✅ Confirm button 始终渲染，disabled when canConfirm=false
+- ✅ 显示安全诊断行（req, exec, token, can_confirm, reason）
+- ✅ Web 容器已重建
+- ✅ issue state 仍为 Todo

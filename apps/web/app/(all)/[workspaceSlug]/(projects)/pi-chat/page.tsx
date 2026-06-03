@@ -277,66 +277,41 @@ function PiChatPage() {
                                 Expires: {new Date(msg.mcpPreview.proposed_action.expires_at).toLocaleTimeString()}
                               </div>
                             </div>
-                            {/* Diagnostic: show field values */}
-                            <div className="text-gray-500 mt-1 text-[10px]">
-                              <span>exec={String(msg.mcpPreview.proposed_action.execution_enabled)}</span>
-                              {" | "}
-                              <span>token={String(Boolean(msg.mcpPreview.proposed_action.confirmation_token))}</span>
-                              {" | "}
-                              <span>req={String(msg.mcpPreview.proposed_action.requires_confirmation)}</span>
-                            </div>
-                            <div className="mt-2 flex gap-2">
-                              <button
-                                disabled={
-                                  !msg.mcpPreview.proposed_action.execution_enabled ||
-                                  !msg.mcpPreview.proposed_action.confirmation_token
-                                }
-                                onClick={() => {
-                                  if (
-                                    msg.mcpPreview?.proposed_action?.execution_enabled &&
-                                    msg.mcpPreview.proposed_action.confirmation_token
-                                  ) {
-                                    const confirmPayload = {
-                                      prompt: "",
-                                      task: "chat",
-                                      mode: "mcp" as const,
-                                      confirm_action_id: msg.mcpPreview.proposed_action.action_id,
-                                      confirmation_token: msg.mcpPreview.proposed_action.confirmation_token,
-                                    };
-                                    void aiService
-                                      .createGptTask(workspaceSlug.toString(), confirmPayload)
-                                      .then((res) => {
-                                        const responseContent = extractAIResponse(res);
-                                        const confirmPreview = extractMCPPreview(res);
-                                        const confirmMsg: ChatMessage = {
-                                          id: generateId(),
-                                          role: "assistant",
-                                          content: responseContent,
-                                          createdAt: new Date().toISOString(),
-                                          mode: "mcp",
-                                          mcpPreview: confirmPreview,
-                                        };
-                                        setMessages((prev) => [...prev, confirmMsg]);
-                                        return undefined;
-                                      })
-                                      .catch(() => {
-                                        const errorMsg: ChatMessage = {
-                                          id: generateId(),
-                                          role: "assistant",
-                                          content: "Failed to confirm action. Please try again.",
-                                          createdAt: new Date().toISOString(),
-                                          mode: "mcp",
-                                        };
-                                        setMessages((prev) => [...prev, errorMsg]);
-                                      });
-                                  }
-                                }}
-                                className="bg-yellow-600 rounded px-2 py-1 text-white disabled:opacity-50"
-                              >
-                                {msg.mcpPreview.proposed_action.execution_enabled ? "Confirm" : "Confirm (not enabled)"}
-                              </button>
-                              <button className="bg-gray-300 text-gray-700 rounded px-2 py-1">Cancel</button>
-                            </div>
+                            {/* Safety diagnostic */}
+                            {(() => {
+                              const pa = msg.mcpPreview.proposed_action;
+                              const requiresConfirmation = Boolean(pa?.requires_confirmation);
+                              const executionEnabled = Boolean(pa?.execution_enabled);
+                              const confirmationTokenPresent = Boolean(pa?.confirmation_token);
+                              const canConfirm = executionEnabled && confirmationTokenPresent;
+                              let disabledReason = "";
+                              if (!requiresConfirmation) disabledReason = "confirmation_not_required";
+                              else if (!executionEnabled) disabledReason = "execution_not_enabled";
+                              else if (!confirmationTokenPresent) disabledReason = "missing_confirmation_token";
+                              return (
+                                <>
+                                  <div className="text-gray-500 mt-1 text-[10px]">
+                                    <span>req={String(requiresConfirmation)}</span>
+                                    {" | "}
+                                    <span>exec={String(executionEnabled)}</span>
+                                    {" | "}
+                                    <span>token={String(confirmationTokenPresent)}</span>
+                                    {" | "}
+                                    <span>can_confirm={String(canConfirm)}</span>
+                                    {disabledReason && <span> | reason={disabledReason}</span>}
+                                  </div>
+                                  <div className="mt-2 flex gap-2">
+                                    <button
+                                      disabled={!canConfirm}
+                                      className="bg-yellow-600 rounded px-2 py-1 text-white disabled:opacity-50"
+                                    >
+                                      Confirm
+                                    </button>
+                                    <button className="bg-gray-300 text-gray-700 rounded px-2 py-1">Cancel</button>
+                                  </div>
+                                </>
+                              );
+                            })()}
                           </div>
                         )}
                       </div>
