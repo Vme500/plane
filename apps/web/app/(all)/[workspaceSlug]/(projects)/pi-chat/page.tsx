@@ -277,6 +277,14 @@ function PiChatPage() {
                                 Expires: {new Date(msg.mcpPreview.proposed_action.expires_at).toLocaleTimeString()}
                               </div>
                             </div>
+                            {/* Diagnostic: show field values */}
+                            <div className="text-gray-500 mt-1 text-[10px]">
+                              <span>exec={String(msg.mcpPreview.proposed_action.execution_enabled)}</span>
+                              {" | "}
+                              <span>token={String(Boolean(msg.mcpPreview.proposed_action.confirmation_token))}</span>
+                              {" | "}
+                              <span>req={String(msg.mcpPreview.proposed_action.requires_confirmation)}</span>
+                            </div>
                             <div className="mt-2 flex gap-2">
                               <button
                                 disabled={
