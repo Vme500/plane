@@ -304,6 +304,43 @@ function PiChatPage() {
                                     <button
                                       type="button"
                                       disabled={!canConfirm}
+                                      onClick={() => {
+                                        if (canConfirm && pa?.confirmation_token) {
+                                          const confirmPayload = {
+                                            prompt: "",
+                                            task: "chat",
+                                            mode: "mcp" as const,
+                                            confirm_action_id: pa.action_id,
+                                            confirmation_token: pa.confirmation_token,
+                                          };
+                                          void aiService
+                                            .createGptTask(workspaceSlug.toString(), confirmPayload)
+                                            .then((res) => {
+                                              const responseContent = extractAIResponse(res);
+                                              const confirmPreview = extractMCPPreview(res);
+                                              const confirmMsg: ChatMessage = {
+                                                id: generateId(),
+                                                role: "assistant",
+                                                content: responseContent,
+                                                createdAt: new Date().toISOString(),
+                                                mode: "mcp",
+                                                mcpPreview: confirmPreview,
+                                              };
+                                              setMessages((prev) => [...prev, confirmMsg]);
+                                              return undefined;
+                                            })
+                                            .catch(() => {
+                                              const errorMsg: ChatMessage = {
+                                                id: generateId(),
+                                                role: "assistant",
+                                                content: "Failed to confirm action. Please try again.",
+                                                createdAt: new Date().toISOString(),
+                                                mode: "mcp",
+                                              };
+                                              setMessages((prev) => [...prev, errorMsg]);
+                                            });
+                                        }
+                                      }}
                                       style={{
                                         padding: "4px 12px",
                                         borderRadius: "6px",
