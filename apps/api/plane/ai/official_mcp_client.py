@@ -42,33 +42,26 @@ def _jsonrpc_notification(method: str, params: Optional[Dict] = None) -> str:
 
 
 def _read_line(proc: subprocess.Popen, timeout: float) -> Optional[str]:
-    """Read one line from stdout with timeout."""
-    import select
+    """Read one line from stdout with timeout using readline()."""
     import time
 
     deadline = time.monotonic() + timeout
-    buf = ""
+    # readline() blocks until a full line is available
+    # We use a simple loop with a check on stdout readability
     while time.monotonic() < deadline:
-        remaining = deadline - time.monotonic()
-        if remaining <= 0:
-            break
-        ready, _, _ = select.select([proc.stdout], [], [], min(remaining, 0.5))
-        if ready:
-            chunk = proc.stdout.read(1)
-            if not chunk:
-                break
-            ch = chunk.decode("utf-8", errors="replace")
-            if ch == "\n":
-                line = buf.strip()
-                if line:
-                    return line
-            else:
-                buf += ch
+        line = proc.stdout.readline()
+        if not line:
+            # EOF
+            return None
+        decoded = line.decode("utf-8", errors="replace").strip()
+        if decoded:
+            return decoded
     return None
 
 
 def _read_response(proc: subprocess.Popen, request_id: str, timeout: float) -> Optional[Dict]:
-    """Read messages until we get a response matching request_id."""
+    """Read messages until we get a response matching request_id.
+    Skips non-JSON lines (e.g. MCP server banner)."""
     import time
 
     deadline = time.monotonic() + timeout
@@ -82,6 +75,7 @@ def _read_response(proc: subprocess.Popen, request_id: str, timeout: float) -> O
         try:
             msg = json.loads(line)
         except json.JSONDecodeError:
+            # Skip non-JSON lines (banner, warnings, etc.)
             continue
         if msg.get("id") == request_id:
             return msg

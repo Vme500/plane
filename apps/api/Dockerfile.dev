@@ -23,6 +23,10 @@ RUN apk --no-cache add \
     "libc-dev" \
     "linux-headers"
 
+# Install uv for MCP server runtime (dev only)
+COPY --from=ghcr.io/astral-sh/uv:latest /uv /usr/local/bin/uv
+COPY --from=ghcr.io/astral-sh/uv:latest /uvx /usr/local/bin/uvx
+
 WORKDIR /code
 
 COPY requirements.txt ./requirements.txt
