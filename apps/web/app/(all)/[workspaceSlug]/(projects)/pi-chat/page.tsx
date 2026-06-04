@@ -300,14 +300,42 @@ function PiChatPage() {
                                     <span>can_confirm={String(canConfirm)}</span>
                                     {disabledReason && <span> | reason={disabledReason}</span>}
                                   </div>
-                                  <div className="mt-2 flex gap-2">
+                                  <div style={{ display: "flex", gap: "8px", marginTop: "8px", alignItems: "center" }}>
                                     <button
+                                      type="button"
                                       disabled={!canConfirm}
-                                      className="bg-yellow-600 rounded px-2 py-1 text-white disabled:opacity-50"
+                                      style={{
+                                        padding: "4px 12px",
+                                        borderRadius: "6px",
+                                        border: "1px solid #d97706",
+                                        backgroundColor: canConfirm ? "#ca8a04" : "#d4d4d4",
+                                        color: canConfirm ? "#ffffff" : "#737373",
+                                        fontSize: "12px",
+                                        fontWeight: "500",
+                                        cursor: canConfirm ? "pointer" : "not-allowed",
+                                        minWidth: "60px",
+                                        minHeight: "24px",
+                                      }}
                                     >
                                       Confirm
                                     </button>
-                                    <button className="bg-gray-300 text-gray-700 rounded px-2 py-1">Cancel</button>
+                                    <button
+                                      type="button"
+                                      style={{
+                                        padding: "4px 12px",
+                                        borderRadius: "6px",
+                                        border: "1px solid #d4d4d4",
+                                        backgroundColor: "#e5e5e5",
+                                        color: "#404040",
+                                        fontSize: "12px",
+                                        fontWeight: "500",
+                                        cursor: "pointer",
+                                        minWidth: "60px",
+                                        minHeight: "24px",
+                                      }}
+                                    >
+                                      Cancel
+                                    </button>
                                   </div>
                                 </>
                               );
