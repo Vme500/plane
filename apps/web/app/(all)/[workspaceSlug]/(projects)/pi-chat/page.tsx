@@ -254,7 +254,7 @@ function PiChatPage() {
                         )}
                         <div className="text-custom-text-400 mt-1 text-[10px]">
                           {msg.mcpPreview.safety?.write_operation
-                            ? "Write proposed | Plan only"
+                            ? "Write proposed | Confirmation required"
                             : "Read-only | Permission filtered"}
                         </div>
                         {/* Phase 9.1: Confirmation card for write operations */}
@@ -277,29 +277,14 @@ function PiChatPage() {
                                 Expires: {new Date(msg.mcpPreview.proposed_action.expires_at).toLocaleTimeString()}
                               </div>
                             </div>
-                            {/* Safety diagnostic */}
+                            {/* Confirmation action area */}
                             {(() => {
                               const pa = msg.mcpPreview.proposed_action;
-                              const requiresConfirmation = Boolean(pa?.requires_confirmation);
                               const executionEnabled = Boolean(pa?.execution_enabled);
                               const confirmationTokenPresent = Boolean(pa?.confirmation_token);
                               const canConfirm = executionEnabled && confirmationTokenPresent;
-                              let disabledReason = "";
-                              if (!requiresConfirmation) disabledReason = "confirmation_not_required";
-                              else if (!executionEnabled) disabledReason = "execution_not_enabled";
-                              else if (!confirmationTokenPresent) disabledReason = "missing_confirmation_token";
                               return (
                                 <>
-                                  <div className="text-gray-500 mt-1 text-[10px]">
-                                    <span>req={String(requiresConfirmation)}</span>
-                                    {" | "}
-                                    <span>exec={String(executionEnabled)}</span>
-                                    {" | "}
-                                    <span>token={String(confirmationTokenPresent)}</span>
-                                    {" | "}
-                                    <span>can_confirm={String(canConfirm)}</span>
-                                    {disabledReason && <span> | reason={disabledReason}</span>}
-                                  </div>
                                   <div style={{ display: "flex", gap: "8px", marginTop: "8px", alignItems: "center" }}>
                                     <button
                                       type="button"
