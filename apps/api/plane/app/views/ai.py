@@ -167,3 +167,61 @@ class AIAuditEventListEndpoint(BaseAPIView):
             },
             status=status.HTTP_200_OK,
         )
+
+
+class AIMCPSettingsEndpoint(BaseAPIView):
+    """Read-only endpoint for MCP provider settings."""
+
+    @allow_permission(allowed_roles=[ROLE.ADMIN], level="WORKSPACE")
+    def get(self, request, slug):
+        from plane.ai.mcp_config import get_mcp_config_safe
+        return Response(get_mcp_config_safe(), status=status.HTTP_200_OK)
+
+
+class AIMCPTestConnectionEndpoint(BaseAPIView):
+    """Test connection to official MCP server."""
+
+    @allow_permission(allowed_roles=[ROLE.ADMIN], level="WORKSPACE")
+    def post(self, request, slug):
+        from plane.ai.mcp_gateway import discover_tools
+        result = discover_tools()
+        if result.get("success"):
+            return Response(
+                {
+                    "ok": True,
+                    "provider": result.get("provider"),
+                    "tool_count": result.get("tool_count", 0),
+                    "has_create_work_item": result.get("has_create_work_item", False),
+                    "has_update_work_item": result.get("has_update_work_item", False),
+                },
+                status=status.HTTP_200_OK,
+            )
+        else:
+            return Response(
+                {
+                    "ok": False,
+                    "provider": result.get("provider"),
+                    "error": result.get("error", "Connection failed."),
+                },
+                status=status.HTTP_200_OK,
+            )
+
+
+class AIMCPToolsEndpoint(BaseAPIView):
+    """List allowed MCP tools."""
+
+    @allow_permission(allowed_roles=[ROLE.ADMIN, ROLE.MEMBER], level="WORKSPACE")
+    def get(self, request, slug):
+        from plane.ai.mcp_config import (
+            get_allowed_read_tools,
+            get_allowed_write_tools,
+            DESTRUCTIVE_TOOLS,
+        )
+        return Response(
+            {
+                "read_tools": get_allowed_read_tools(),
+                "write_tools": get_allowed_write_tools(),
+                "destructive_tools": DESTRUCTIVE_TOOLS,
+            },
+            status=status.HTTP_200_OK,
+        )
