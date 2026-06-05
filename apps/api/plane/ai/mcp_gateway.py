@@ -35,7 +35,7 @@ from .mcp_config import (
     is_read_tool_allowed,
     is_write_tool_allowed,
 )
-from .official_mcp_client import list_tools_safe
+from .official_mcp_client import list_tools_safe, call_tool_safe
 
 
 def discover_tools() -> Dict[str, Any]:
@@ -73,6 +73,36 @@ def discover_tools() -> Dict[str, Any]:
         "has_create_work_item": result.get("has_create_work_item", False),
         "has_update_work_item": result.get("has_update_work_item", False),
     }
+
+
+def call_read_tool(
+    tool_name: str,
+    arguments: Optional[Dict[str, Any]] = None,
+) -> Dict[str, Any]:
+    """
+    Call a read tool via official MCP server.
+    Returns sanitized result, never exposes raw MCP response.
+    """
+    if not is_read_tool_allowed(tool_name):
+        return {"success": False, "error": "Tool not in read allowlist."}
+
+    command = get_mcp_command()
+    args = get_mcp_args()
+    env = {
+        "PLANE_API_KEY": get_mcp_api_key() or "",
+        "PLANE_WORKSPACE_SLUG": get_mcp_workspace_slug(),
+        "PLANE_BASE_URL": get_mcp_base_url(),
+    }
+
+    result = call_tool_safe(
+        tool_name=tool_name,
+        arguments=arguments,
+        command=command,
+        args=args,
+        env=env,
+        timeout=30.0,
+    )
+    return result
 
 
 def generate_write_proposal(

@@ -185,3 +185,125 @@ def list_tools_safe(
                         stream.close()
                 except Exception:
                     pass
+
+
+def call_tool_safe(
+    tool_name: str,
+    arguments: Optional[Dict[str, Any]] = None,
+    command: str = "uvx",
+    args: Optional[List[str]] = None,
+    env: Optional[Dict[str, str]] = None,
+    timeout: float = 30.0,
+) -> Dict[str, Any]:
+    """
+    Call a single tool via official MCP server.
+
+    Returns:
+        {"success": True, "result": {...}} or {"success": False, "error": "..."}
+    """
+    if args is None:
+        args = ["plane-mcp-server", "stdio"]
+
+    proc = None
+    try:
+        full_env = os.environ.copy()
+        if env:
+            full_env.update(env)
+
+        proc = subprocess.Popen(
+            [command, *args],
+            stdin=subprocess.PIPE,
+            stdout=subprocess.PIPE,
+            stderr=subprocess.PIPE,
+            env=full_env,
+            start_new_session=True,
+        )
+
+        # Initialize
+        init_id = _new_id()
+        init_msg = json.dumps({
+            "jsonrpc": "2.0",
+            "id": init_id,
+            "method": "initialize",
+            "params": {
+                "protocolVersion": "2025-03-26",
+                "capabilities": {},
+                "clientInfo": {"name": "plane-ai-gateway", "version": "1.0.0"},
+            },
+        })
+        proc.stdin.write((init_msg + "\n").encode("utf-8"))
+        proc.stdin.flush()
+
+        init_resp = _read_response(proc, init_id, timeout)
+        if not init_resp or "error" in init_resp:
+            return {"success": False, "error": _SAFE_ERROR}
+
+        # Initialized notification
+        proc.stdin.write((_jsonrpc_notification("notifications/initialized") + "\n").encode("utf-8"))
+        proc.stdin.flush()
+
+        # Call tool
+        call_id = _new_id()
+        call_msg = json.dumps({
+            "jsonrpc": "2.0",
+            "id": call_id,
+            "method": "tools/call",
+            "params": {
+                "name": tool_name,
+                "arguments": arguments or {},
+            },
+        })
+        proc.stdin.write((call_msg + "\n").encode("utf-8"))
+        proc.stdin.flush()
+
+        call_resp = _read_response(proc, call_id, timeout)
+        if not call_resp:
+            return {"success": False, "error": _SAFE_ERROR}
+
+        if "error" in call_resp:
+            return {"success": False, "error": _SAFE_ERROR}
+
+        # Extract content
+        result = call_resp.get("result", {})
+        content = result.get("content", [])
+
+        text_parts = []
+        for block in content:
+            if isinstance(block, dict) and block.get("type") == "text":
+                text_parts.append(block.get("text", ""))
+
+        if text_parts:
+            raw_text = "\n".join(text_parts)
+            try:
+                parsed = json.loads(raw_text)
+                return {"success": True, "result": parsed}
+            except (json.JSONDecodeError, TypeError):
+                return {"success": True, "result": {"text": raw_text}}
+
+        return {"success": True, "result": result}
+
+    except subprocess.TimeoutExpired:
+        return {"success": False, "error": _SAFE_ERROR}
+    except FileNotFoundError:
+        return {"success": False, "error": _SAFE_ERROR}
+    except Exception as e:
+        log_exception(e)
+        return {"success": False, "error": _SAFE_ERROR}
+    finally:
+        if proc is not None:
+            try:
+                if proc.poll() is None:
+                    proc.terminate()
+                    try:
+                        proc.wait(timeout=3)
+                    except subprocess.TimeoutExpired:
+                        proc.kill()
+                        proc.wait(timeout=2)
+            except Exception:
+                pass
+            for stream in (proc.stdin, proc.stdout, proc.stderr):
+                try:
+                    if stream:
+                        stream.close()
+                except Exception:
+                    pass
