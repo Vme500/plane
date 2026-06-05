@@ -4,16 +4,17 @@
  * See the LICENSE file for details.
  */
 
-import React from "react";
+import React, { useState } from "react";
 import { observer } from "mobx-react";
 import { useParams } from "next/navigation";
 // plane imports
-import { DraftIcon, HomeIcon, PiChatLogo, YourWorkIcon, DashboardIcon } from "@plane/propel/icons";
+import { DraftIcon, HomeIcon, YourWorkIcon, DashboardIcon, Bot } from "@plane/propel/icons";
 import { EUserWorkspaceRoles } from "@plane/types";
 // hooks
 import { useUserPermissions, useUser } from "@/hooks/store/user";
 // local imports
 import { SidebarUserMenuItem } from "./user-menu-item";
+import { AIAssistantDrawer } from "./ai-assistant-drawer";
 
 export const SidebarUserMenu = observer(function SidebarUserMenu() {
   // navigation
@@ -21,6 +22,8 @@ export const SidebarUserMenu = observer(function SidebarUserMenu() {
   // store hooks
   const { workspaceUserInfo } = useUserPermissions();
   const { data: currentUser } = useUser();
+  // AI drawer state
+  const [aiDrawerOpen, setAiDrawerOpen] = useState(false);
 
   const SIDEBAR_USER_MENU_ITEMS = [
     {
@@ -51,22 +54,26 @@ export const SidebarUserMenu = observer(function SidebarUserMenu() {
       access: [EUserWorkspaceRoles.ADMIN, EUserWorkspaceRoles.MEMBER],
       Icon: DraftIcon,
     },
-    {
-      key: "pi-chat",
-      labelTranslationKey: "sidebar.pi_chat",
-      href: `/${workspaceSlug.toString()}/pi-chat/`,
-      access: [EUserWorkspaceRoles.ADMIN, EUserWorkspaceRoles.MEMBER, EUserWorkspaceRoles.GUEST],
-      Icon: PiChatLogo,
-    },
   ];
 
   const draftIssueCount = workspaceUserInfo[workspaceSlug.toString()]?.draft_issue_count;
 
   return (
-    <div className="flex flex-col gap-0.5">
-      {SIDEBAR_USER_MENU_ITEMS.map((item) => (
-        <SidebarUserMenuItem key={item.key} item={item} draftIssueCount={draftIssueCount} />
-      ))}
-    </div>
+    <>
+      <div className="flex flex-col gap-0.5">
+        {SIDEBAR_USER_MENU_ITEMS.map((item) => (
+          <SidebarUserMenuItem key={item.key} item={item} draftIssueCount={draftIssueCount} />
+        ))}
+        {/* Native AI Assistant button */}
+        <button
+          onClick={() => setAiDrawerOpen(true)}
+          className="text-sm text-custom-text-300 hover:bg-custom-background-80 hover:text-custom-text-200 flex items-center gap-1.5 rounded-md px-2 py-1.5 font-medium"
+        >
+          <Bot className="size-4 flex-shrink-0" />
+          <span>AI Assistant</span>
+        </button>
+      </div>
+      <AIAssistantDrawer isOpen={aiDrawerOpen} onClose={() => setAiDrawerOpen(false)} />
+    </>
   );
 });
