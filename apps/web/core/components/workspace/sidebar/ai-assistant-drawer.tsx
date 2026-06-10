@@ -5,6 +5,7 @@
  */
 
 import { useState, useCallback } from "react";
+import { createPortal } from "react-dom";
 import { observer } from "mobx-react";
 import { useParams } from "next/navigation";
 // plane imports
@@ -90,8 +91,9 @@ export const AIAssistantDrawer = observer(function AIAssistantDrawer({ isOpen, o
 
   if (!isOpen) return null;
 
-  return (
-    <div className="shadow-lg fixed inset-y-0 right-0 z-50 flex w-96 flex-col border-l border-subtle bg-surface-1">
+  // Render via portal to escape sidebar overflow/z-index constraints
+  return createPortal(
+    <div className="shadow-2xl fixed inset-y-0 right-0 z-[100] flex w-96 flex-col border-l border-subtle bg-surface-1">
       {/* Header */}
       <div className="flex items-center justify-between border-b border-subtle px-4 py-3">
         <h2 className="text-sm text-custom-text-100 font-medium">Plane AI</h2>
@@ -161,6 +163,7 @@ export const AIAssistantDrawer = observer(function AIAssistantDrawer({ isOpen, o
           </Button>
         </div>
       </div>
-    </div>
+    </div>,
+    document.body
   );
 });
