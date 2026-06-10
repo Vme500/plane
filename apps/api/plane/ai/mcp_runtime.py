@@ -132,6 +132,23 @@ def parse_mcp_intent(prompt: str) -> Dict[str, Any]:
             params["proposed_state_id"] = uuids[1]
         return {"tool_name": "update_work_item_state", "params": params}
 
+    # Create work item intent detection (Phase 9.5B-R3)
+    if any(word in prompt_lower for word in [
+        "新增", "创建", "新建", "create work item", "create issue",
+        "add a work item", "add an issue",
+    ]):
+        import re
+        # Try to extract title from prompt patterns like:
+        # "命名为 xxx" / "名为 xxx" / "title xxx"
+        title = None
+        title_match = re.search(r'(?:命名为|名为|title[:\s]*)["“]?([^"”]+)["”]?', prompt)
+        if title_match:
+            title = title_match.group(1).strip()
+        params = {"prompt": prompt}
+        if title:
+            params["title"] = title
+        return {"tool_name": "create_work_item", "params": params}
+
     # Default: not recognized as an MCP tool request
     return {"tool_name": None, "params": {}}
 
@@ -267,13 +284,101 @@ def _generate_proposed_action(
     from datetime import timedelta
     from django.core.signing import TimestampSigner
     from django.utils import timezone
-    from plane.db.models import Issue, State, ProjectMember, WorkspaceMember
+    from plane.db.models import Issue, State, Project, ProjectMember, WorkspaceMember
 
-    if tool_name != "update_work_item_state":
+    if tool_name not in ("update_work_item_state", "create_work_item"):
         return None
 
     params = params or {}
     actor_id = str(user.id) if user else None
+
+    # === create_work_item ===
+    if tool_name == "create_work_item":
+        title = params.get("title", "")
+        prompt = params.get("prompt", "")
+
+        # Try to extract title from prompt if not provided
+        if not title:
+            import re
+            title_match = re.search(r'(?:命名为|名为|title[:\s]*)["\']?([^"\']+)["\']?', prompt)
+            if title_match:
+                title = title_match.group(1).strip()
+        if not title:
+            title = "New work item"
+
+        # Find the first project in the workspace the user can access
+        project = None
+        project_name = None
+        projects_qs = _get_accessible_projects_qs(user, workspace_slug)
+        first_project = projects_qs.first()
+        if first_project:
+            project = first_project
+            project_name = first_project.name
+
+        if not project:
+            return {
+                "action_id": str(uuid.uuid4()),
+                "workspace_slug": workspace_slug,
+                "actor_id": actor_id,
+                "action_type": "create_work_item",
+                "target_type": "work_item",
+                "target_id": None,
+                "target_display": title,
+                "project": None,
+                "proposed_value": title,
+                "risk_level": "medium",
+                "summary": f"Create work item: {title}",
+                "requires_confirmation": True,
+                "expires_at": (timezone.now() + timedelta(minutes=5)).isoformat(),
+                "execution_enabled": False,
+                "confirmation_token": None,
+            }
+
+        # Generate signed confirmation token
+        signer = TimestampSigner()
+        token_payload = json.dumps({
+            "action_id": str(uuid.uuid4()),
+            "workspace_slug": workspace_slug,
+            "actor_id": actor_id,
+            "project_id": str(project.id),
+            "title": title,
+            "action_type": "create_work_item",
+        })
+        action_id = str(uuid.uuid4())
+        token_payload_dict = json.loads(token_payload)
+        token_payload_dict["action_id"] = action_id
+        confirmation_token = signer.sign(json.dumps(token_payload_dict))
+
+        create_ai_audit_event(
+            event="ai.write.proposed",
+            workspace_slug=workspace_slug,
+            actor_id=actor_id,
+            mode="mcp",
+            tool_name="create_work_item",
+            tool_status="proposed",
+            readonly=False,
+            write_operation=True,
+        )
+
+        return {
+            "action_id": action_id,
+            "workspace_slug": workspace_slug,
+            "actor_id": actor_id,
+            "action_type": "create_work_item",
+            "target_type": "work_item",
+            "target_id": None,
+            "target_display": title,
+            "project": {"id": str(project.id), "name": project_name},
+            "proposed_value": title,
+            "risk_level": "medium",
+            "summary": f"Create work item: {title}",
+            "requires_confirmation": True,
+            "expires_at": (timezone.now() + timedelta(minutes=5)).isoformat(),
+            "execution_enabled": True,
+            "confirmation_token": confirmation_token,
+        }
+
+    # === update_work_item_state ===
     issue_id = params.get("issue_id")
     proposed_state_id = params.get("proposed_state_id")
 
