@@ -278,3 +278,28 @@ Current Web UI issue:
   - `[MCP] unknown tool`
 - This means official MCP backend `proposed_action` is not yet wired correctly to the Web UI, or the Web bundle/mode state is stale.
 - Before confirmed `create_work_item` testing, fix or validate the Web confirmation card.
+
+### 11. ECC Integration
+
+ECC (Engineering Coding Companion) is configured as a development harness.
+
+**Project-level rules**: `.claude/rules/ecc/` (common, typescript, python)
+
+**Project config**: `.claude/ecc-project-config.md`
+
+**Recommended agents**:
+
+- planner, architect, code-reviewer, security-reviewer
+- typescript-reviewer, python-reviewer, database-reviewer
+- build-error-resolver, doc-updater
+
+**Recommended skills**:
+
+- coding-standards, backend-patterns, frontend-patterns
+- django-patterns, django-security, django-tdd
+- python-patterns, python-testing
+- security-review, tdd-workflow, verification-loop
+
+**Priority**: CLAUDE.md project rules take priority over ECC generic suggestions.
+
+**Auto-push rule**: After phase completion, auto-commit and push to origin current branch per CLAUDE.md standing instructions.
