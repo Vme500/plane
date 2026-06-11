@@ -1293,6 +1293,40 @@
 
 ---
 
+## Phase 9.5B-R7: Dedicated Edge Profile Proposed-Only E2E ⚠️
+
+**Goal**: End-to-end validation of native AI proposed-only flow via dedicated Edge profile.
+
+**Changes**:
+
+- Launched dedicated Edge profile (port 9223)
+- Backend verification: all 11 checks PASS
+- State verification: asdfg=0, ai.write.executed=1
+- Code-level UI verification: all elements present
+- Build verification: new code deployed
+
+**Acceptance Criteria**:
+
+- [x] Route firewall PASS
+- [x] Dedicated Edge profile launched
+- [x] CDP accessible
+- [x] Backend response correct (all 11 fields)
+- [x] asdfg count = 0
+- [x] ai.write.executed = 1
+- [x] Code-level UI elements verified
+- [x] Build includes fixes
+- [ ] User manual UI verification (pending login)
+
+**Limitations**: WSL→Windows CDP blocked, requires one-time user login
+
+**Risks**: Low (backend + code verified, UI pending manual check)
+
+**Future PR**: No (fork-only)
+
+**Report**: See [PHASE_9_5B_R7_DEDICATED_EDGE_PROPOSED_ONLY_E2E_REPORT.md](./PHASE_9_5B_R7_DEDICATED_EDGE_PROPOSED_ONLY_E2E_REPORT.md)
+
+---
+
 ## Phase 9: Claude Code Runtime (Advanced, Fork-Only)
 
 **Goal**: Implement optional Claude Code Runtime for advanced capabilities.
