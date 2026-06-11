@@ -200,6 +200,18 @@ Do not confuse these concepts:
 - `ai.write.proposed` increases
 - `ai.write.executed` does not increase
 
+### 6.1 Native AI Route Firewall (9.5B-R4) ✅
+
+Native AI route is isolated from legacy. Verified by `scripts/check_native_ai_route_firewall.py`:
+
+- `ai_native.py` only imports `mcp_gateway`, never `mcp_runtime`
+- Frontend `ai-assistant-drawer.tsx` uses `NativeAIService`, not `createGptTask`
+- Response `source` = `official_mcp_gateway`
+- Frontend validates `source === "official_mcp_gateway"`
+- `confirmation_token` NOT returned to frontend
+
+Run `python3 scripts/check_native_ai_route_firewall.py` to re-verify.
+
 ### 7. UI Validation Rules
 
 For Web AI tests use:

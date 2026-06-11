@@ -1191,6 +1191,40 @@
 
 ---
 
+## Phase 9.5B-R4: Native AI Official MCP Route Firewall ✅
+
+**Goal**: Enforce that native AI Drawer only routes through official MCP gateway, with zero legacy leakage.
+
+**Changes**:
+
+- New native AI endpoint: `apps/api/plane/app/views/ai_native.py`
+- New frontend service: `apps/web/core/services/native-ai.service.ts`
+- New route firewall script: `scripts/check_native_ai_route_firewall.py`
+- Drawer switched from `createGptTask` to `NativeAIService`
+- Drawer validates `source === "official_mcp_gateway"`
+- URL routes registered in `apps/api/plane/app/urls/external.py`
+
+**Acceptance Criteria**:
+
+- [x] Native endpoint only routes through `mcp_gateway`
+- [x] No import of `mcp_runtime` in native AI files
+- [x] No `createGptTask` in native Drawer
+- [x] No `/ai-assistant/` old endpoint in native Drawer
+- [x] Response `source` = `official_mcp_gateway`
+- [x] Frontend validates `source`
+- [x] `confirmation_token` NOT returned (only `confirmation_token_present: bool`)
+- [x] Route firewall script passes
+- [x] `asdfg` count = 0
+- [x] Pushed to origin
+
+**Risks**: Low (documentation + route isolation)
+
+**Future PR**: No (fork-only)
+
+**Report**: See [PHASE_9_5B_R4_NATIVE_AI_OFFICIAL_MCP_FIREWALL_REPORT.md](./PHASE_9_5B_R4_NATIVE_AI_OFFICIAL_MCP_FIREWALL_REPORT.md)
+
+---
+
 ## Phase 9: Claude Code Runtime (Advanced, Fork-Only)
 
 **Goal**: Implement optional Claude Code Runtime for advanced capabilities.
