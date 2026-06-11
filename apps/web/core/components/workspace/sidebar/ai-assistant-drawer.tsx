@@ -142,19 +142,21 @@ export const AIAssistantDrawer = observer(function AIAssistantDrawer({ isOpen, o
                 <div className="text-yellow-800 mb-2 font-medium">Write Operation Proposed</div>
                 <div className="text-yellow-700 space-y-1">
                   <div>Action: {pa.action_type}</div>
-                  {pa.project && <div>Project: {pa.project.name}</div>}
-                  {(pa.title || pa.target_display) && <div>Title: {pa.title || pa.target_display}</div>}
+                  <div>Project: {pa.project?.name ?? "Unknown project"}</div>
+                  <div>Title: {pa.title || pa.target_display || "Untitled"}</div>
                   {pa.risk_level && <div>Risk: {pa.risk_level}</div>}
                   <div className="text-yellow-600 mt-1 text-[10px]">Confirmation required</div>
                 </div>
                 <div className="mt-3 flex gap-2">
                   <button
                     disabled={!canConfirm}
-                    className="bg-yellow-600 text-xs rounded px-3 py-1 font-medium text-white disabled:opacity-50"
+                    className="bg-blue-600 text-xs hover:bg-blue-700 rounded px-3 py-1.5 font-medium text-white disabled:opacity-50"
                   >
                     Confirm
                   </button>
-                  <button className="bg-gray-300 text-xs text-gray-700 rounded px-3 py-1">Cancel</button>
+                  <button className="bg-gray-300 text-xs text-gray-700 hover:bg-gray-400 rounded px-3 py-1.5">
+                    Cancel
+                  </button>
                 </div>
               </div>
             ) : response.message ? (

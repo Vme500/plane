@@ -240,6 +240,27 @@ The UI **should** show for `create_work_item`:
 
 If browser automation fails, ask the user for manual screenshot verification. Do not spend excessive time fighting browser automation.
 
+### 7.1 Dedicated Edge Profile for UI Testing
+
+Use a dedicated Edge profile to avoid polluting the user's main browser:
+
+```
+%LOCALAPPDATA%\Microsoft\Edge\User Data\PlaneAI-MCP-Test
+```
+
+Launch with remote debugging port `9223`:
+
+```powershell
+Start-Process msedge -ArgumentList '--remote-debugging-port=9223','--user-data-dir=$env:LOCALAPPDATA\Microsoft\Edge\User Data\PlaneAI-MCP-Test','--no-first-run','--new-window','http://localhost:18181/ai-test/projects'
+```
+
+Rules:
+
+- Never use the user's default Edge profile for testing
+- Never commit cookies, sessions, or profile data
+- The dedicated profile is for UI verification only
+- User completes one-time login in the dedicated profile
+
 ### 8. Documentation and Phase Reports
 
 Phase reports go under: `docs/ai-assistant/`

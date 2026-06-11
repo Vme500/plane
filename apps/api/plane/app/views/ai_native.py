@@ -132,12 +132,25 @@ class NativeAIProposeEndpoint(BaseAPIView):
                 prompt_summary=message,
             )
 
-            # Build project info for response
+            # Build project info for response — always resolve
             project_info = None
             if project_id and project_name:
                 project_info = {"id": project_id, "name": project_name}
             elif proposal.get("project"):
                 project_info = proposal["project"]
+            # Fallback: resolve from project_id in arguments
+            if not project_info and arguments.get("project_id"):
+                from plane.db.models import Project as _Proj
+                _p = _Proj.objects.filter(id=arguments["project_id"]).first()
+                if _p:
+                    project_info = {"id": str(_p.id), "name": _p.name}
+            # Fallback: first project in workspace
+            if not project_info:
+                from plane.db.models import Project as _Proj
+                _ws = get_mcp_workspace_slug() or slug
+                _p = _Proj.objects.filter(workspace__slug=_ws).first()
+                if _p:
+                    project_info = {"id": str(_p.id), "name": _p.name}
 
             return Response(
                 {

@@ -1261,6 +1261,38 @@
 
 ---
 
+## Phase 9.5B-R6: Native AI Card & Identity Fix ✅
+
+**Goal**: Fix proposed card UI (Project, Confirm visibility) and stabilize dev test identity.
+
+**Changes**:
+
+- Confirm button: `bg-yellow-600` → `bg-blue-600` (visible on yellow card)
+- Project field: always show with fallback `Unknown project`
+- Title field: always show with fallback `Untitled`
+- Backend: added project resolution fallbacks in `ai_native.py`
+- Dev identity: `admin@ai-test.local` confirmed stable
+
+**Acceptance Criteria**:
+
+- [x] Route firewall PASS
+- [x] Dev test user exists and is stable
+- [x] Workspace/project permissions verified
+- [x] MCP workspace slug matches test workspace
+- [x] Project=AI Test Project shows in card
+- [x] Confirm button visible (blue on yellow)
+- [x] Dedicated Edge profile launched
+- [x] `asdfg` count = 0
+- [x] No secrets leaked
+
+**Risks**: Low (UI fix + identity stabilization)
+
+**Future PR**: No (fork-only)
+
+**Report**: See [PHASE_9_5B_R6_NATIVE_AI_CARD_AND_IDENTITY_FIX_REPORT.md](./PHASE_9_5B_R6_NATIVE_AI_CARD_AND_IDENTITY_FIX_REPORT.md)
+
+---
+
 ## Phase 9: Claude Code Runtime (Advanced, Fork-Only)
 
 **Goal**: Implement optional Claude Code Runtime for advanced capabilities.
