@@ -1373,3 +1373,47 @@
 **Risks**: Medium (deployment complexity)
 
 **Future PR**: Yes (deployment infrastructure)
+
+---
+
+## Phase AUTO-1: AutoLoop Harness ✅
+
+**Goal**: Create controlled autonomous development loop for Plane AI.
+
+**Changes**:
+
+- Created `tools/plane-ai-autoloop/` with 7 files
+- Added Autonomous Loop Protocol to CLAUDE.md
+- Pre-flight check script: `run_checks.sh`
+
+**Acceptance Criteria**:
+
+- [x] AutoLoop harness created
+- [x] Pre-flight checks pass
+- [x] CLAUDE.md updated
+- [x] Task queue established (AUTO-1 through AUTO-5)
+
+**Report**: See [PHASE_AUTO_1_PLANE_AI_AUTOLOOP_HARNESS_REPORT.md](./PHASE_AUTO_1_PLANE_AI_AUTOLOOP_HARNESS_REPORT.md)
+
+---
+
+## Phase AUTO-2: Dev E2E Identity ✅
+
+**Goal**: Stabilize dev-only E2E test account for browser validation.
+
+**Changes**:
+
+- Created `plane-ai-e2e@ai-test.local` user
+- Added to workspace `ai-test` (role=20)
+- Added to project `AI Test Project` (role=20)
+
+**Acceptance Criteria**:
+
+- [x] e2e_user_exists
+- [x] e2e_user_active
+- [x] workspace_member
+- [x] project_permission
+- [x] mcp_workspace_slug=ai-test
+- [x] secret_printed=false
+
+**Report**: See [PHASE_AUTO_2_DEV_E2E_IDENTITY_REPORT.md](./PHASE_AUTO_2_DEV_E2E_IDENTITY_REPORT.md)

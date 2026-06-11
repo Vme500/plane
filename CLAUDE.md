@@ -335,4 +335,38 @@ ECC (Engineering Coding Companion) is configured as a development harness.
 
 **Priority**: CLAUDE.md project rules take priority over ECC generic suggestions.
 
+## Autonomous Loop Protocol
+
+### Rules
+
+1. Claude Code can auto-develop, test, commit, push
+2. **Cannot** auto-click Confirm
+3. **Cannot** auto-create asdfg
+4. **Cannot** affect 18080
+5. Every round must run `bash tools/plane-ai-autoloop/run_checks.sh`
+6. Every round must output compact JSON report
+7. Chinese report ≤ 80 lines per round
+8. **Must stop** at user gates
+9. Real writes require explicit user authorization
+10. Native route must stay on official MCP gateway
+11. Route firewall FAIL → must stop
+
+### JSON Report Format
+
+Use `tools/plane-ai-autoloop/round_report_template.json` as template.
+
+Status values: `continue`, `completed`, `blocked`, `needs_user_action`
+
+### User Gates
+
+| Gate              | Phase  | Action                              |
+| ----------------- | ------ | ----------------------------------- |
+| Browser login     | AUTO-3 | User logs in dedicated Edge Profile |
+| Manual screenshot | AUTO-3 | User takes screenshot if CDP fails  |
+| Confirm click     | 9.5C   | User explicitly approves            |
+
+### AutoLoop Files
+
+All harness files in `tools/plane-ai-autoloop/`. See README.md for details.
+
 **Auto-push rule**: After phase completion, auto-commit and push to origin current branch per CLAUDE.md standing instructions.

@@ -1,0 +1,23 @@
+{
+  "status": "continue|completed|blocked|needs_user_action",
+  "phase": "",
+  "summary": "",
+  "files_changed": [],
+  "commands_run": [],
+  "checks": {
+    "git_clean": "",
+    "dev_stack": "",
+    "route_firewall": "",
+    "secret_scan": "",
+    "asdfg_count": "",
+    "ai_write_executed": "",
+    "native_route": "",
+    "edge_profile": ""
+  },
+  "user_action_required": {
+    "required": false,
+    "reason": "",
+    "exact_steps": []
+  },
+  "next_phase": ""
+}
