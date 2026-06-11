@@ -1417,3 +1417,37 @@
 - [x] secret_printed=false
 
 **Report**: See [PHASE_AUTO_2_DEV_E2E_IDENTITY_REPORT.md](./PHASE_AUTO_2_DEV_E2E_IDENTITY_REPORT.md)
+
+---
+
+## Phase AUTO-3: Dedicated Edge Profile Proposed-Only E2E ✅
+
+**Goal**: End-to-end validation of native AI proposed-only flow via automated browser control.
+
+**Changes**:
+
+- Automated login via PowerShell CDP WebSocket
+- Fixed onboarding via Django shell
+- Verified proposed card rendering via CDP DOM inspection
+
+**Acceptance Criteria**:
+
+- [x] Edge Profile launched with CDP
+- [x] Login automated (email + password + onboarding fix)
+- [x] AI Assistant visible and clickable
+- [x] Drawer opens with Provider: official MCP
+- [x] Write Operation Proposed visible
+- [x] Action=create_work_item visible
+- [x] Project=AI Test Project visible
+- [x] Title=asdfg visible
+- [x] Risk=medium visible
+- [x] Confirmation required visible
+- [x] Confirm visible/enabled
+- [x] Cancel visible
+- [x] No confirmation_token displayed
+- [x] No raw JSON displayed
+- [x] asdfg count = 0
+- [x] ai.write.executed = 1
+- [x] Route firewall PASS
+
+**Report**: See [PHASE_AUTO_3_DEDICATED_EDGE_PROPOSED_ONLY_REPORT.md](./PHASE_AUTO_3_DEDICATED_EDGE_PROPOSED_ONLY_REPORT.md)
