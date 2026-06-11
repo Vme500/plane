@@ -13,6 +13,7 @@ from plane.app.views.ai import (
     AIMCPTestConnectionEndpoint,
     AIMCPToolsEndpoint,
 )
+from plane.app.views.ai_native import NativeAIStatusEndpoint, NativeAIProposeEndpoint
 
 
 urlpatterns = [
@@ -46,5 +47,15 @@ urlpatterns = [
         "workspaces/<str:slug>/ai-assistant/mcp/tools/",
         AIMCPToolsEndpoint.as_view(),
         name="ai-mcp-tools",
+    ),
+    path(
+        "workspaces/<str:slug>/ai-assistant/native/status/",
+        NativeAIStatusEndpoint.as_view(),
+        name="ai-native-status",
+    ),
+    path(
+        "workspaces/<str:slug>/ai-assistant/native/propose/",
+        NativeAIProposeEndpoint.as_view(),
+        name="ai-native-propose",
     ),
 ]

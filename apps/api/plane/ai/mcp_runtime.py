@@ -3,6 +3,11 @@
 # See the LICENSE file for details.
 
 """
+LEGACY PI-AI ROUTE ONLY.
+Do not use this module for native Plane AI.
+Native AI must use official_mcp_gateway only.
+Do not add new intent parsing here.
+
 MCP Runtime - Read-only MCP runtime for Plane AI Assistant.
 
 Dispatches to one of two adapters based on AI_MCP_ADAPTER:

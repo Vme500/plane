@@ -11,28 +11,30 @@ import { useParams } from "next/navigation";
 // plane imports
 import { Button } from "@plane/propel/button";
 // services
-import { AIService } from "@/services/ai.service";
+import { NativeAIService } from "@/services/native-ai.service";
 
-const aiService = new AIService();
+const nativeAIService = new NativeAIService();
 
 type ProposedAction = {
+  source?: string;
   action_type: string;
   target_type: string;
   target_display?: string;
+  title?: string;
+  project?: { id: string; name: string };
   proposed_value?: string;
   risk_level?: string;
   requires_confirmation: boolean;
   execution_enabled: boolean;
-  confirmation_token?: string;
+  confirmation_token_present?: boolean;
 };
 
 type AIResponse = {
   route?: string;
-  mode?: string;
-  action_type?: string;
+  source?: string;
+  response_type?: string;
   proposed_action?: ProposedAction;
-  project?: { id: string; name: string };
-  title?: string;
+  message?: string;
   error?: string;
 };
 
@@ -52,34 +54,50 @@ export const AIAssistantDrawer = observer(function AIAssistantDrawer({ isOpen, o
     setLoading(true);
     setResponse(null);
     try {
-      const res = await aiService.createGptTask(workspaceSlug.toString(), {
-        prompt: input.trim(),
-        task: "chat",
-        mode: "mcp",
+      const res = await nativeAIService.propose(workspaceSlug.toString(), {
+        message: input.trim(),
       });
-      // Parse the response
-      const mcpPreview = (res as Record<string, unknown>)?.mcp_preview as Record<string, unknown> | undefined;
-      const proposedAction = mcpPreview?.proposed_action as ProposedAction | undefined;
-      const tool = mcpPreview?.tool as Record<string, unknown> | undefined;
 
-      if (proposedAction) {
+      // Validate source: only accept official_mcp_gateway
+      const source = (res as Record<string, unknown>)?.source as string | undefined;
+      if (source !== "official_mcp_gateway") {
         setResponse({
-          route: "official_mcp",
-          mode: "proposed_action",
-          action_type: proposedAction.action_type,
-          proposed_action: proposedAction,
-          title: proposedAction.target_display || "",
-          project: undefined,
+          error: "Unsupported AI route. Native AI only accepts official MCP gateway responses.",
         });
-      } else if (tool) {
+        return;
+      }
+
+      const responseType = (res as Record<string, unknown>)?.response_type as string | undefined;
+      const proposedAction = (res as Record<string, unknown>)?.proposed_action as ProposedAction | undefined;
+      const message = (res as Record<string, unknown>)?.message as string | undefined;
+      const error = (res as Record<string, unknown>)?.error as string | undefined;
+
+      if (error) {
+        setResponse({ error });
+      } else if (responseType === "proposed_action" && proposedAction) {
+        // Validate proposed_action source
+        if (proposedAction.source !== "official_mcp_gateway") {
+          setResponse({
+            error: "Unsupported AI route. Proposed action must come from official MCP gateway.",
+          });
+          return;
+        }
         setResponse({
           route: "official_mcp",
-          mode: "tool_result",
-          action_type: tool.name as string,
+          source: "official_mcp_gateway",
+          response_type: "proposed_action",
+          proposed_action: proposedAction,
+        });
+      } else if (responseType === "text" && message) {
+        setResponse({
+          route: "official_mcp",
+          source: "official_mcp_gateway",
+          response_type: "text",
+          message,
         });
       } else {
         setResponse({
-          error: "Could not process your request. Please try a different phrasing.",
+          error: "Could not process your request. Try a different phrasing.",
         });
       }
     } catch {
@@ -91,7 +109,9 @@ export const AIAssistantDrawer = observer(function AIAssistantDrawer({ isOpen, o
 
   if (!isOpen) return null;
 
-  // Render via portal to escape sidebar overflow/z-index constraints
+  const pa = response?.proposed_action;
+  const canConfirm = Boolean(pa?.execution_enabled && pa?.confirmation_token_present);
+
   return createPortal(
     <div className="shadow-2xl fixed inset-y-0 right-0 z-[100] flex w-96 flex-col border-l border-subtle bg-surface-1">
       {/* Header */}
@@ -117,26 +137,28 @@ export const AIAssistantDrawer = observer(function AIAssistantDrawer({ isOpen, o
               <div className="border-red-200 bg-red-50 text-xs text-red-700 rounded-md border p-3">
                 {response.error}
               </div>
-            ) : response.proposed_action ? (
+            ) : pa ? (
               <div className="border-yellow-300 bg-yellow-50 text-xs rounded-md border p-3">
                 <div className="text-yellow-800 mb-2 font-medium">Write Operation Proposed</div>
                 <div className="text-yellow-700 space-y-1">
-                  <div>Action: {response.proposed_action.action_type}</div>
-                  {response.project && <div>Project: {response.project.name}</div>}
-                  {response.title && <div>Title: {response.title}</div>}
-                  {response.proposed_action.risk_level && <div>Risk: {response.proposed_action.risk_level}</div>}
+                  <div>Action: {pa.action_type}</div>
+                  {pa.project && <div>Project: {pa.project.name}</div>}
+                  {(pa.title || pa.target_display) && <div>Title: {pa.title || pa.target_display}</div>}
+                  {pa.risk_level && <div>Risk: {pa.risk_level}</div>}
                   <div className="text-yellow-600 mt-1 text-[10px]">Confirmation required</div>
                 </div>
                 <div className="mt-3 flex gap-2">
                   <button
-                    disabled={!response.proposed_action.execution_enabled}
-                    className="bg-yellow-600 text-xs rounded px-3 py-1 text-white disabled:opacity-50"
+                    disabled={!canConfirm}
+                    className="bg-yellow-600 text-xs rounded px-3 py-1 font-medium text-white disabled:opacity-50"
                   >
                     Confirm
                   </button>
                   <button className="bg-gray-300 text-xs text-gray-700 rounded px-3 py-1">Cancel</button>
                 </div>
               </div>
+            ) : response.message ? (
+              <div className="text-xs text-custom-text-200 rounded-md bg-surface-2 p-3">{response.message}</div>
             ) : (
               <div className="text-xs text-custom-text-200 rounded-md bg-surface-2 p-3">
                 Request processed successfully.

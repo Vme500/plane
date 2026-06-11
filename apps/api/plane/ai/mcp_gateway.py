@@ -105,6 +105,29 @@ def call_read_tool(
     return result
 
 
+def _generate_confirmation_token(
+    action_id: str,
+    workspace_slug: str,
+    actor_id: Optional[str],
+    tool_name: str,
+    arguments: Dict[str, Any],
+) -> str:
+    """Generate a signed confirmation token for write operations."""
+    import json as _json
+    from django.core.signing import TimestampSigner
+
+    signer = TimestampSigner()
+    payload = _json.dumps({
+        "action_id": action_id,
+        "workspace_slug": workspace_slug,
+        "actor_id": actor_id,
+        "tool_name": tool_name,
+        "project_id": arguments.get("project_id"),
+        "title": arguments.get("name"),
+    })
+    return signer.sign(payload)
+
+
 def generate_write_proposal(
     tool_name: str,
     arguments: Dict[str, Any],
@@ -153,7 +176,7 @@ def generate_write_proposal(
         "requires_confirmation": True,
         "expires_at": (timezone.now() + timedelta(minutes=5)).isoformat(),
         "execution_enabled": True,
-        "confirmation_token": None,  # Token generated on confirm, not stored
+        "confirmation_token": _generate_confirmation_token(action_id, workspace_slug, actor_id, tool_name, arguments),
     }
 
     # Audit
