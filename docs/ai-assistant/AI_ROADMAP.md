@@ -1225,6 +1225,42 @@
 
 ---
 
+## Phase 9.5B-R5: Native AI Proposed-Only UI Validation ✅
+
+**Goal**: Validate native AI Drawer proposed-only UI after route firewall enforcement.
+
+**Changes**:
+
+- Backend validation: native/propose returns correct proposed_action
+- Frontend build verification: NativeAIService in production build
+- UI code verification: all confirmation card elements present
+
+**Acceptance Criteria**:
+
+- [x] Route firewall PASS
+- [x] native/propose returns `source=official_mcp_gateway`
+- [x] `response_type=proposed_action`
+- [x] `action_type=create_work_item`
+- [x] `project.name=AI Test Project`
+- [x] `title=asdfg`
+- [x] `requires_confirmation=true`
+- [x] `confirmation_token_present=true` (value not exposed)
+- [x] `raw_result_returned=false`
+- [x] `asdfg` count = 0
+- [x] `ai.write.executed` = 1 (unchanged)
+- [x] Confirm button visible/enabled in code
+- [x] Cancel button visible in code
+- [x] No `confirmation_token` exposed to frontend
+- [x] Frontend build includes NativeAIService
+
+**Risks**: Low (validation only, no code changes)
+
+**Future PR**: No (fork-only)
+
+**Report**: See [PHASE_9_5B_R5_NATIVE_AI_PROPOSED_ONLY_UI_VALIDATION_REPORT.md](./PHASE_9_5B_R5_NATIVE_AI_PROPOSED_ONLY_UI_VALIDATION_REPORT.md)
+
+---
+
 ## Phase 9: Claude Code Runtime (Advanced, Fork-Only)
 
 **Goal**: Implement optional Claude Code Runtime for advanced capabilities.
